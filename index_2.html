@@ -376,6 +376,16 @@ const PROJECTS = [
       intro:"평상시 AWS를 Active로, GCP를 Warm Standby로 두고 Route 53 Failover로 전환합니다. Split-brain 방지를 위해 어느 시점에도 Write 원본은 한 곳만 유지되도록 설계했습니다.",
       image:{src:"arch-dr.png", cap:"GCP DR / 트래픽 아키텍처 — AWS Active / GCP Warm Standby"},
     },
+    demo:{
+      intro:"이벤트를 선택해 FinOps Workflow를 실행하면 Agent들이 순차적으로 판단하고, 조정 전/후 Peak·필요 Pod·예상 비용과 Agent 진행 로그를 한 화면에서 확인합니다. 세 가지 분산 전략(비용/안정성/균형)을 점수화해 추천안을 제시하고, 품질 검증을 통과한 최종 리포트는 Slack #finops-approvals로도 전달되어 운영자가 즉시 Dry-run 승인 또는 재계획을 결정할 수 있습니다.",
+      images:[
+        {src:"finops-dash1.png", cap:"FinOps MAS Control 대시보드 — 조정 전 1346 → 조정 후 1932 rps · 필요 Pod 69 · 예상 $93.33 · Agent 진행 로그"},
+        {src:"finops-dash2.png", cap:"보고서 대화 — '왜 Pod가 69개 필요해?' → ceil(1932 / 28) = 69, 계산 근거와 사용한 조회 도구까지 응답"},
+        {src:"finops-compare.png", cap:"후보 계획 비교 — 비용 우선 / 안정성 우선 / 균형 · p95·위험도·점수 · 품질 검증 통과"},
+        {src:"finops-report.png", cap:"최종 리포트 — 트래픽 예측·비용 분석·정책 검증·실행 계획(T-10m~T-0)·Fallback·사후 학습"},
+        {src:"finops-slack.png", cap:"Slack #finops-approvals — 계획 보고서 전달 · Dry-run 승인 또는 재계획 결정"},
+      ],
+    },
     decisions:[
       {title:"서비스망과 운영망을 별도 VPC · EKS로 분리", body:"공개 서비스(financial-service-eks)와 높은 권한을 가진 운영 자동화·보안 대응 시스템(financial-ops-eks)을 물리적으로 분리했습니다.", trade:"장애·권한 격리와 독립 확장성을 얻는 대신, 클러스터 간 K8s DNS를 쓸 수 없어 내부 NLB·VPC Peering·별도 IAM 관리가 필요해졌습니다."},
       {title:"인터넷 의존도를 줄인 내부 GitOps + ECR 미러 구조", body:"Argo CD가 내부 Git을 바라보고, 외부 이미지는 ECR로 미러링한 뒤 Cosign 서명까지 수행합니다. \"이미지는 ECR, YAML은 Git\"으로 저장소 역할을 분리했습니다.", trade:"공급망 통제와 재현성을 얻는 대신, 이미지 미러·Gitea bootstrap·placeholder 치환 등 운영 복잡도가 추가됩니다."},
@@ -728,6 +738,12 @@ function renderDetail(p){
 
   if(p.dr){
     html+=`<div class="block"><div class="block-label">멀티클라우드 DR</div><p>${p.dr.intro}</p>${figure(p.dr.image)}</div>`;
+  }
+
+  if(p.demo){
+    html+=`<div class="block"><div class="block-label">라이브 데모 · 운영 대시보드</div><p>${p.demo.intro}</p>`;
+    (p.demo.images||[]).forEach(im=>html+=figure(im));
+    html+=`</div>`;
   }
 
   if(p.troubleshooting){
