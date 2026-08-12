@@ -123,6 +123,8 @@
   .proj-ministat { display:flex; gap:26px; flex-wrap:wrap; }
   .proj-ministat span { font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); }
   .proj-ministat b { color:var(--ink); font-weight:600; }
+  .proj-gh { display:inline-flex; align-items:center; gap:6px; margin-top:18px; padding:7px 14px; border:1px solid var(--line); border-radius:8px; font-family:var(--mono); font-size:12px; color:var(--ink-mid); text-decoration:none; transition:all .18s; }
+  .proj-gh:hover { border-color:var(--ink); color:var(--ink); background:rgba(0,0,0,0.03); }
   .proj-go { flex-shrink:0; width:40px; height:40px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; color:var(--ink-mid); font-size:17px; transition:all .2s; }
   .proj-card:hover .proj-go { background:var(--ink); color:var(--bg); border-color:var(--ink); transform:translateX(2px); }
 
@@ -638,6 +640,8 @@ function renderHome(){
   list.innerHTML='';
   PROJECTS.forEach(p=>{
     const mini=(p.ministat||[]).map(m=>`<span><b>${m[0]}</b> ${m[1]}</span>`).join('');
+    const gh=(p.links||[]).find(l=>/github\.com/.test(l.url));
+    const ghLink=gh?`<a class="proj-gh" href="${gh.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">GitHub ↗</a>`:'';
     const card=el(`
       <div class="proj-card reveal" onclick="go('/project/${p.id}')">
         <div class="proj-card-inner">
@@ -649,6 +653,7 @@ function renderHome(){
             <div class="proj-title">${p.title}</div>
             <div class="proj-oneline">${p.oneline}</div>
             <div class="proj-ministat">${mini}</div>
+            ${ghLink}
           </div>
           <div class="proj-go">→</div>
         </div>
