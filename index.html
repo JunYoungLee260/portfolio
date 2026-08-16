@@ -202,6 +202,7 @@
 
   .block { margin-bottom:56px; }
 
+<<<<<<< HEAD
   /* ── 아키텍처 섹션 (소제목 → 이미지 → 해설) ── */
   .arch-sec { margin:28px 0 4px; }
   .arch-sec.arch-sec-after { margin:4px 0 8px; }
@@ -215,6 +216,8 @@
   .agent-name { font-weight:650; color:var(--ink); font-size:15px; margin-right:10px; }
   .agent-desc { color:var(--ink-mid); font-size:14.5px; line-height:1.6; }
 
+=======
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
   /* ── 배경 3단계 흐름 SVG ── */
   .bg-flow { margin:0 0 30px; padding:24px 20px; background:var(--surface); border:1px solid var(--line); border-radius:14px; }
   .bg-flow svg { width:100%; height:auto; display:block; }
@@ -409,12 +412,17 @@
 const PROJECTS = [
   {
     id:"mas",
+<<<<<<< HEAD
     chapterOrder:["배경","아키텍처","기여","FinOps 워크플로","설계 결정","관측성","DR","보안","기술 스택"],
+=======
+    chapterOrder:["배경","아키텍처","기여","데모","설계 결정","관측성","DR","보안","기술 스택"],
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
     title:"MAS — AI Agent 기반 클라우드 운영 자동화 플랫폼",
     role:"AWS CI/CD · EKS FinOps",
     team:"7인 팀 프로젝트",
     oneline:"금융권 망분리 규제 완화를 기점으로, AI가 금융 클라우드 인프라의 비용 최적화·장애 대응·보안 운영을 자동화하는 시대를 가정해 격리·감사·승인 통제를 갖춘 AI 운영 플랫폼을 설계한 프로젝트.",
     techline:"서비스망·운영망을 분리한 2-EKS / 4-VPC 위에 GitOps, 통합 관측성, Temporal 기반 FinOps·AIOps·SecOps와 Slack 승인형(HITL) 자동 대응을 구현한 금융 클라우드 운영 플랫폼.",
+<<<<<<< HEAD
     ministat:[["-30%","운영비"],["~3분","AI 감지"],["12건/주","자동 탐지"],["5분","변경"]],
     stats:[
       {val:"-30%",label:"SaaS APM 대비 관측 운영비 절감"},
@@ -426,6 +434,27 @@ const PROJECTS = [
     architecture:{
       intro:"이 인프라는 두 축으로 구성됩니다. 온프레미스 ↔ AWS를 잇는 <strong>하이브리드 클라우드</strong> 축과, AWS ↔ GCP로 이어지는 <strong>멀티클라우드</strong> 축입니다. 중요 데이터와 통제권은 안쪽(온프레·격리 운영망)에 두고, 서비스는 클라우드에서 유연하게 운영하며, 장애 시 다른 클라우드로 넘어갈 수 있게 설계했습니다. 아래 네 그림이 이 구조를 격리·배포·하이브리드·DR 순으로 보여줍니다.",
       sections:[
+=======
+    ministat:[["4","VPC"],["2","EKS"],["705","TF 리소스"],["1,202","커밋"]],
+    stats:[
+      {val:"~3분",label:"AI 운영 워크플로 실행 (데모 실측)"},
+      {val:"-$5.96/일",label:"SaaS APM 대비 관측 비용 절감"},
+      {val:"1",label:"사람 진입 경로 (Teleport 단일 관문)"},
+      {val:"0",label:"정적 자격증명 (키리스 설계)"},
+    ],
+    background:"<strong>왜 시작했나 —</strong> 2026년 금융권 망분리 규제 완화는 금융권이 클라우드·AI를 받아들이기 시작한 신호였습니다. 다만 현재 열린 것은 <strong>비민감 데이터를 다루는 사무용 SaaS를 통제된 단말에서 쓰는 영역</strong>까지이고, 생성형 AI 예외 등 완화는 단계적으로 진행 중입니다. 이 프로젝트는 그 추세가 이어져 <strong>클라우드에 올라간 금융 서비스의 운영 자체에 AI가 개입하는 단계</strong>까지 온다고 가정하고, 그때 필수가 될 통제 체계를 선제적으로 구현한 것입니다.<br><br><strong>어떻게 방향을 잡았나 —</strong> 이 프로젝트는 클라우드 인프라 구성이 목적이므로, AI 운영 서비스를 클라우드 안에서 동작시키기 위해 만족해야 할 금융권 규제부터 조사했습니다. 그 결과 핵심 요건은 세 가지로 정리됐습니다 — <strong>격리</strong>(운영 영역을 외부와 단절), <strong>감사</strong>(접근을 단일 경로로 좁히고 기록), <strong>변경통제</strong>(인프라 변경은 사람의 확인을 거침). 이 세 요건을 동시에 만족시키는 것을 목표로, <strong>서비스망·격리 운영망·단일 관문·온프레 연동으로 분리한 4-VPC 구조에 사람 승인 기반(HITL) AI 자동화와 GCP DR을 얹은 아키텍처</strong>로 방향을 잡았습니다.<br><br><strong>왜 이 아키텍처인가 —</strong> <strong>격리</strong>는 AI 자동화가 외부 LLM 호출을 피할 수 없고 그 연결이 유출·침투 경로가 되므로, 운영망을 인터넷과 완전히 단절하고 LLM은 통제된 경로로만 호출하게 했습니다. <strong>감사</strong>는 격리된 운영망에 사람이 접근하는 순간 격리가 깨질 수 있어, 진입을 전담하는 별도 관문을 두어 모든 접속을 단일 경로로 좁히고 기록했습니다. <strong>변경통제</strong>는 운영 AI가 인프라 상태를 직접 바꾸는 만큼, 위험한 변경은 사람이 최종 승인한 뒤에만 반영되게 해 오조치를 차단했습니다.<br><br><span class='bg-src'><strong>참고 규제</strong> · 격리: 전자금융감독규정 제15조, 시행세칙 제2조의3·별표7(망분리 대체 정보보호통제) · 감사: 규정 제13조(접근기록·1년 보존), 제28조(관리자 행위 이중확인·모니터링) · 변경통제: 규정 제7조제7호(정보기술부문 내부통제), 제13조제5항 · 데이터: 제34조의3(암호화). 현행 규제는 온프레미스 전산을 전제로 하며, 본 프로젝트는 그 통제 수준을 클라우드 아키텍처로 재현한 것입니다.</span>",
+    architecture:{
+      intro:"목적별로 4개 VPC를 분리하고 필요한 경로만 Peering으로 연결했습니다. <strong>VPC1 서비스망</strong>은 인터넷에 노출된 고객 서비스, <strong>VPC2 운영망</strong>은 인터넷과 완전 격리된 AI 운영·관제, <strong>VPC3 관문</strong>은 Teleport 단일 진입, <strong>VPC4 연동</strong>은 온프레미스·GCP를 잇는 Headscale 터널을 담당합니다. 전체는 AWS Active + GCP Warm Standby DR 구조이며, 배포는 내부 GitOps로만 이뤄집니다.",
+      images:[
+        {src:"arch-vpc.png", cap:"4-VPC 분리형 멀티 AZ 구조 (Service · Ops · Teleport · Headscale)"},
+        {src:"arch-cicd.png", cap:"AWS CI/CD 및 GitOps 아키텍처 — Source → 보안 Gate → ECR 서명 이미지 → 내부 Gitea → Argo CD → EKS"},
+        {src:"arch-onprem.png", cap:"온프레미스 ↔ AWS 하이브리드 — 중요정보는 온프레 보관, 운영 메트릭만 WireGuard 터널로 전송"},
+      ],
+    },
+    contribution:{
+      intro:"7인 팀 프로젝트에서 <strong>AWS CI/CD 파이프라인</strong>과 <strong>EKS FinOps</strong> 두 영역을 담당했습니다.",
+      items:[
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
         {
           title:"① 목적별 4-VPC 격리",
           body:"VPC를 목적에 따라 넷으로 분리했습니다. <strong>VPC1 서비스망</strong>은 인터넷에 노출된 고객 서비스, <strong>VPC2 운영망</strong>은 인터넷과 완전히 격리된 AI 운영·관제, <strong>VPC3 관문</strong>은 Teleport를 통한 사람의 단일 진입 경로, <strong>VPC4 연동</strong>은 온프레미스·GCP를 잇는 Headscale 터널을 담당합니다. 노출 영역과 통제 영역을 VPC 단위로 물리적으로 분리한 것이 핵심입니다.",
@@ -483,6 +512,7 @@ const PROJECTS = [
     },
     security:{
       label:"보안 아키텍처", short:"보안",
+<<<<<<< HEAD
       intro:"<strong>예방부터 승인형 자동 대응까지 —</strong> MAS는 금융 클라우드 환경을 가정해 서비스망과 운영망을 분리하고, 관리자·CI·워크로드마다 별도의 인증 경로를 적용했습니다. Cilium과 Istio로 클러스터 통신을 통제하고, Trivy·cosign·Kyverno로 빌드부터 배포까지 이미지 무결성을 검증했습니다. CloudTrail 기반 탐지와 컴플라이언스 조회 체계를 구성했으며, 고위험 이벤트는 AI 분석과 두 번의 운영자 승인, dry-run 검증을 통과한 경우에만 실제 격리 또는 IAM 권한 회수가 수행되도록 설계했습니다.",
       highlights:["4-VPC 망분리","OIDC · Pod Identity","Cilium Enforce","Signed Image Only","CloudTrail · SIEM","2-Step HITL"],
       items:[
@@ -516,6 +546,35 @@ const PROJECTS = [
           body:"<strong>탐지에서 실제 대응까지 이어지는 승인형 SecOps 워크플로를 구현했습니다.</strong> CloudTrail IAM 이벤트와 Hubble 네트워크 이벤트의 중복을 제거하고 관련 이벤트를 Incident로 그룹화한 뒤, Bedrock이 검색된 금융 보안 규정 근거를 바탕으로 위험도와 대응 필요성을 분석합니다.<br><br>고위험 이벤트도 즉시 실행하지 않습니다. Slack 1차 승인 후 Kubernetes server-side dry-run 또는 IAM 회수 계획을 생성하고, 운영자가 예상 결과를 확인해 2차 승인한 경우에만 CiliumNetworkPolicy를 이용한 Pod 격리, 고권한 IAM 정책 회수 또는 신규 Access Key 비활성화를 수행합니다. 중요 네임스페이스 격리 거부, 중복 조치 제거, 승인 만료, 전역 dry-run 스위치와 감사 로그를 안전장치로 두었습니다.",
           image:{src:"sec-hitl.png", cap:"SecOps 2단계 승인 — 탐지 · 규정 기반 분석 · 1차 승인 · dry-run · 2차 승인 · 실제 대응 · 감사 기록"},
         },
+=======
+      intro:"단일 방어에 의존하지 않고 <strong>계층 방어(Defense-in-Depth)</strong>로 설계했습니다. 네트워크·자격증명·클러스터 런타임·공급망·탐지의 다섯 층이 각각 독립적으로 작동해, 한 층이 뚫려도 다음 층이 막습니다.",
+      items:[
+        {
+          title:"전체 보안 구조 — 망분리 4-VPC + 단일 진입",
+          body:"사람은 Teleport(VPC3) 한 곳으로만 진입하고, 운영망(VPC2)은 인터넷과 완전 차단됩니다. 서비스별 암호키를 분리하고, 인바운드는 Route53·WAF·ALB·TLS·Istio Gateway를 순차 통과합니다.",
+          image:{src:"sec-overview.png", cap:"AWS 보안 아키텍처 — 4-VPC 망분리 · Teleport 단일 진입 · 계층 방어"},
+        },
+        {
+          title:"자격증명 — 정적 키 제로 설계",
+          body:"사람·CI·워크로드 세 주체 모두 장기 키 없이 동작합니다. 사람은 MFA 강제, CI는 GitHub Actions OIDC, 워크로드는 EKS Pod Identity로 최소권한을 부여하고, 비밀값은 KMS CMK로 자동 로테이션합니다.",
+          image:{src:"sec-identity.png", cap:"정적 자격증명 제로 — MFA · OIDC · Pod Identity · KMS 로테이션"},
+        },
+        {
+          title:"클러스터 런타임 — 네트워크부터 프로세스까지 다층 방어",
+          body:"Cilium(eBPF)로 default-deny 후 화이트리스트, Istio Ambient로 전역 mTLS, Kyverno로 서명 이미지만 배포, Tetragon으로 런타임 이상 탐지, RBAC로 파드별 권한을 최소화했습니다.",
+          image:{src:"sec-runtime.png", cap:"클러스터 내부 다층 방어 — Cilium · Istio · Kyverno · Tetragon · RBAC"},
+        },
+        {
+          title:"공급망 — 빌드부터 배포까지 무결성 검증",
+          body:"GitHub Actions가 이미지를 빌드해 ECR에 푸시하고 KMS 백엔드 cosign으로 서명하면, 클러스터 진입 시 Kyverno가 서명을 재검증합니다. 모든 AWS 접근은 OIDC로 통일해 Access Key 없이 배포합니다.",
+          image:{src:"sec-supplychain.png", cap:"CI/CD 공급망 보안 — 빌드 → KMS cosign 서명 → Kyverno 재검증"},
+        },
+        {
+          title:"탐지·감사 — 자체 구축한 컴플라이언스 감시",
+          body:"CloudTrail + EventBridge 커스텀 규칙 + Prowler로 Breakglass·Root 활동·IAM 권한상승·네트워크 변경 등을 감시하고, Prowler로 KISA ISMS-P·AWS FSBP를 스캔해 Athena+Glue 기반 SIEM으로 통합 조회합니다.",
+          image:{src:"sec-detection.png", cap:"탐지·컴플라이언스·감사 로깅 — CloudTrail · EventBridge · Prowler · SIEM"},
+        },
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
       ],
     },
     demo:{
@@ -903,6 +962,7 @@ function renderDetail(p){
 
   if(p.architecture){
     let b=`<p>${p.architecture.intro}</p>`;
+<<<<<<< HEAD
     (p.architecture.sections||[]).forEach(sec=>{
       b+=`<div class="arch-sec"><div class="arch-sec-title">${sec.title}</div></div>`;
       if(sec.image) b+=figure(sec.image);
@@ -918,12 +978,20 @@ function renderDetail(p){
       b+=`<div class="di"><div class="di-title" style="font-size:14px;color:var(--cyan)">${fl.label} 흐름</div>`;
       b+=`<div class="flow">`+fl.nodes.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<fl.nodes.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div></div>`;
     });
+=======
+    (p.architecture.images||[]).forEach(im=>b+=figure(im));
+    (p.architecture.flows||[]).forEach(fl=>{
+      b+=`<div class="di"><div class="di-title" style="font-size:14px;color:var(--cyan)">${fl.label} 흐름</div>`;
+      b+=`<div class="flow">`+fl.nodes.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<fl.nodes.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div></div>`;
+    });
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
     add('아키텍처','아키텍처',b);
   }
 
   if(p.contribution){
     let b=`<p>${p.contribution.intro}</p>`;
     p.contribution.items.forEach(it=>{
+<<<<<<< HEAD
       if(it.imageFirst && it.image){
         b+=`<div class="di"><div class="di-title">${it.title}</div>`;
         b+=`</div>`;
@@ -940,6 +1008,14 @@ function renderDetail(p){
         if(it.image) b+=figure(it.image);
         (it.images||[]).forEach(im=>b+=figure(im));
       }
+=======
+      b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div>`;
+      if(it.flow) b+=`<div class="flow">`+it.flow.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<it.flow.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
+      if(it.code) b+=`<div class="codeblock">${it.code}</div>`;
+      b+=`</div>`;
+      if(it.image) b+=figure(it.image);
+      (it.images||[]).forEach(im=>b+=figure(im));
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
     });
     add('담당 · 기여','기여',b);
   }
@@ -958,6 +1034,7 @@ function renderDetail(p){
 
   if(p.security){
     let b=`<p>${p.security.intro}</p>`;
+<<<<<<< HEAD
     if(p.security.highlights){
       b+=`<div class="flow">`+p.security.highlights.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<p.security.highlights.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
     }
@@ -965,6 +1042,11 @@ function renderDetail(p){
       b+=`<div class="arch-sec"><div class="arch-sec-title">${it.title}</div></div>`;
       if(it.image) b+=figure(it.image);
       b+=`<div class="arch-sec arch-sec-after"><div class="arch-sec-body">${it.body}</div></div>`;
+=======
+    (p.security.items||[]).forEach(it=>{
+      b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`;
+      if(it.image) b+=figure(it.image);
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
     });
     (p.security.images||[]).forEach(im=>b+=figure(im));
     add(p.security.label||'샌드박스 보안', p.security.short||'보안', b);
@@ -988,6 +1070,7 @@ function renderDetail(p){
   }
 
   if(p.demo){
+<<<<<<< HEAD
     let b='';
     if(p.demo.agents){
       b+=`<div class="arch-sec"><div class="arch-sec-title">${p.demo.agentsTitle||'AI Agent 구성'}</div>`;
@@ -1006,6 +1089,11 @@ function renderDetail(p){
       if(sec.body) b+=`<div class="arch-sec arch-sec-after"><div class="arch-sec-body">${sec.body}</div></div>`;
     });
     add('FinOps 워크플로 · 라이브 데모','FinOps 워크플로',b);
+=======
+    let b=`<p>${p.demo.intro}</p>`;
+    (p.demo.images||[]).forEach(im=>b+=figure(im));
+    add('라이브 데모 · 운영 대시보드','데모',b);
+>>>>>>> 51fff52d8674e797d6556a824de9d4c849b90824
   }
 
   if(p.troubleshooting){
