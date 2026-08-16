@@ -483,43 +483,43 @@ const PROJECTS = [
     },
     security:{
       label:"보안 아키텍처", short:"보안",
-      intro:"단일 방어에 의존하지 않고 <strong>계층 방어(Defense-in-Depth)</strong>로 설계했습니다. 네트워크·자격증명·클러스터 런타임·공급망·탐지의 다섯 층이 각각 독립적으로 작동해, 한 층이 뚫려도 다음 층이 막습니다.",
+      intro:"<strong>보안 아키텍처 — 예방부터 승인형 자동 대응까지</strong><br><br>MAS는 금융 클라우드 환경을 가정해 서비스망과 운영망을 분리하고, 관리자·CI·워크로드마다 별도의 인증 경로를 적용했습니다. Cilium과 Istio로 클러스터 통신을 통제하고, Trivy·cosign·Kyverno로 빌드부터 배포까지 이미지 무결성을 검증했습니다. CloudTrail 기반 탐지와 컴플라이언스 조회 체계를 구성했으며, 고위험 이벤트는 AI 분석과 두 번의 운영자 승인, dry-run 검증을 통과한 경우에만 실제 격리 또는 IAM 권한 회수가 수행되도록 설계했습니다.<br><br><strong>4-VPC 망분리 · OIDC/Pod Identity · Cilium Enforce · Signed Image Only · CloudTrail/SIEM · 2-Step HITL</strong>",
       items:[
         {
-          title:"전체 보안 구조 — 망분리 4-VPC + 단일 진입",
-          body:"사람은 Teleport(VPC3) 한 곳으로만 진입하고, 운영망(VPC2)은 인터넷과 완전 차단됩니다. 서비스별 암호키를 분리하고, 인바운드는 Route53·WAF·ALB·TLS·Istio Gateway를 순차 통과합니다.",
+          title:"서비스와 운영 권한의 장애 범위를 분리하다",
+          body:"이 이미지는 인프라를 네 영역으로 분리한 전체 보안 구조를 보여줍니다. VPC1은 외부 금융 서비스망, VPC2는 MAS·관측·보안 시스템이 위치한 운영망, VPC3는 Teleport 관리자 관문, VPC4는 GCP·Oracle 연결용 VPN 허브입니다. 외부 트래픽은 Route 53 → WAF → ALB → TLS → Istio Gateway를 통과하고, 관리자는 MFA → Teleport의 단일 경로로 접근합니다.",
           image:{src:"sec-overview.png", cap:"AWS 보안 아키텍처 — 4-VPC 망분리 · Teleport 단일 진입 · 계층 방어"},
-          explanation:"<strong>서비스와 운영 권한의 장애 범위를 분리했습니다.</strong> 외부 서비스를 제공하는 Service EKS와 높은 권한을 가진 운영 자동화·보안 대응 시스템이 실행되는 Ops EKS를 별도 VPC로 나눠, 서비스 침해나 장애가 운영 제어 영역으로 전파되는 범위를 제한했습니다.<br><br>외부 서비스 트래픽은 Route 53·WAF·ALB·TLS·Istio Gateway를 순차적으로 통과하고, RDS는 비공개 서브넷에 배치해 별도의 KMS 키로 암호화했습니다. 운영자 접근은 MFA가 적용된 Teleport로 일원화하고, 운영망은 VPC Endpoint 중심의 사설 AWS 접근 구조로 설계했습니다.",
+          explanation:"외부 서비스를 제공하는 Service EKS와 높은 권한의 운영 자동화·보안 대응 시스템이 실행되는 Ops EKS를 별도 VPC로 분리해, 서비스 침해나 장애가 운영 제어 영역으로 직접 전파되는 범위를 제한했습니다. 운영자 접근은 MFA가 적용된 Teleport로 일원화하고 운영망은 VPC Endpoint 중심으로 AWS 서비스에 사설 접근합니다. RDS는 비공개 서브넷에 배치하고 별도의 KMS 키로 암호화했습니다.<br><br><strong>외부 사용자 경로와 관리자 경로를 분리하고, 높은 권한을 가진 운영 영역을 별도 보안 경계로 보호했습니다.</strong>",
         },
         {
-          title:"자격증명 — 정적 키 제로 설계",
-          body:"사람·CI·워크로드 세 주체 모두 장기 키 없이 동작합니다. 사람은 MFA 강제, CI는 GitHub Actions OIDC, 워크로드는 EKS Pod Identity로 최소권한을 부여하고, 비밀값은 KMS CMK로 자동 로테이션합니다.",
+          title:"사람·CI·워크로드의 인증 경로를 분리하다",
+          body:"이미지는 AWS 접근 주체를 사람(IAM Group·MFA), CI/CD(GitHub Actions OIDC), 워크로드(EKS Pod Identity)로 나눈 구조를 보여줍니다. 비밀값은 Secrets Manager → External Secrets Operator → Kubernetes Secret 경로로 전달하고, 데이터는 서비스별 KMS CMK로 암호화하며 긴급 권한은 MFA 기반 Breakglass Role로 분리했습니다.",
           image:{src:"sec-identity.png", cap:"정적 자격증명 제로 — MFA · OIDC · Pod Identity · KMS 로테이션"},
-          explanation:"<strong>사람·CI·워크로드의 인증 경로를 분리했습니다.</strong> 운영자는 MFA, GitHub Actions는 OIDC 단기 세션, EKS 워크로드는 ServiceAccount 단위 Pod Identity를 사용합니다. 데이터베이스 비밀번호와 API 자격증명은 코드나 이미지에 포함하지 않고, External Secrets Operator가 Secrets Manager에서 필요한 값만 조회해 Kubernetes Secret으로 동기화합니다.<br><br>운영 모드에서는 IAM 사용자의 신규 Access Key 발급을 차단하고, 14자·복잡도·90일 비밀번호 정책과 RDS Secret 로테이션, 용도별 KMS CMK를 구성했습니다. 다만 IAM 사용자의 기존 키 보유 여부는 코드만으로 확인할 수 있으므로, 정확한 성과는 <strong>CI와 EKS 워크로드의 장기 키 의존도를 줄였다</strong>는 것입니다.",
+          explanation:"운영자는 MFA, GitHub Actions는 OIDC 단기 세션, EKS 워크로드는 ServiceAccount 단위 Pod Identity를 사용합니다. 데이터베이스 비밀번호와 API 자격증명은 코드나 이미지에 포함하지 않고 External Secrets Operator가 필요한 Secret만 동기화합니다.<br><br>최소 14자·복잡도·90일 비밀번호 정책, 운영 모드의 신규 Access Key 발급 차단, RDS Secret 자동 로테이션, RDS·S3·CloudTrail·EKS·Logs·SNS 등 용도별 KMS 키, MFA 기반 Breakglass Role을 구성했습니다. 모든 주체의 정적 키가 0개라고 단정하지 않고, <strong>CI와 EKS 워크로드의 장기 자격증명 의존도를 줄였다</strong>고 표현했습니다.",
         },
         {
-          title:"클러스터 런타임 — 네트워크부터 프로세스까지 다층 방어",
-          body:"Cilium(eBPF)로 default-deny 후 화이트리스트, Istio Ambient로 전역 mTLS, Kyverno로 서명 이미지만 배포, Tetragon으로 런타임 이상 탐지, RBAC로 파드별 권한을 최소화했습니다.",
+          title:"Audit에서 Enforce까지, 실제 통신을 기준으로 정책을 완성하다",
+          body:"이미지는 Kubernetes 내부 보안을 Cilium 네트워크 통제, Istio Ambient mTLS, Kyverno Admission·서명 검증, Tetragon 런타임 관찰, Trivy Operator 취약점·설정 리포트, Kubernetes RBAC 최소권한의 여러 단계로 나눈 구조를 보여줍니다.",
           image:{src:"sec-runtime.png", cap:"클러스터 내부 다층 방어 — Cilium · Istio · Kyverno · Tetragon · RBAC"},
-          explanation:"<strong>Cilium 정책은 Audit에서 Enforce로 단계적으로 전환했습니다.</strong> ingress·egress를 기본 차단하고 네임스페이스·Pod label·port·FQDN 단위로 필요한 통신만 허용했습니다. 전환 후 발생한 DNS·API Server·Temporal·Istio 등의 실제 DROP과 통신 장애를 분석해 allow 정책을 보완했습니다.<br><br>약 90개의 Cilium 정책 객체를 정의하고 57개 정책 파일을 GitOps 배포 목록에 연결했습니다. Istio에는 mesh 기본 STRICT mTLS를 선언하고, Tetragon에는 프로세스 실행·권한상승·민감 파일 접근·커널 모듈 로드를 관찰하는 정책을 구성했습니다. MAS·Temporal·Istio 등 일부 인프라 네임스페이스는 안정성을 위해 default-deny 대상에서 제외했습니다.",
+          explanation:"Cilium 정책을 Audit에서 Enforce로 단계적으로 전환하고 ingress·egress를 기본 차단한 뒤 네임스페이스·Pod label·port·FQDN 기준으로 필요한 통신만 허용했습니다. DNS·API Server·Temporal·Istio의 실제 DROP과 장애를 분석해 allow 정책을 보완했으며, Bedrock·SQS 접근도 광범위한 CIDR 대신 FQDN으로 제한했습니다.<br><br>약 90개 정책 객체와 GitOps에 연결된 57개 정책 파일을 구성했습니다. Istio에는 mesh 기본 STRICT mTLS, Tetragon에는 프로세스 실행·권한상승·ServiceAccount Token 접근·커널 모듈 로드 관찰 정책을 선언했습니다. Trivy Operator는 배포 이미지와 Kubernetes 설정 리포트를 생성합니다. Cilium Enforce와 DROP 대응은 Git 이력으로 확인했지만 Istio·Tetragon의 현재 차단·탐지 결과는 별도 운영 검증이 필요합니다. MAS·Temporal·Istio 등 일부 인프라 네임스페이스는 안정성을 위해 default-deny에서 제외했습니다.",
         },
         {
-          title:"공급망 — 빌드부터 배포까지 무결성 검증",
-          body:"GitHub Actions가 이미지를 빌드해 ECR에 푸시하고 KMS 백엔드 cosign으로 서명하면, 클러스터 진입 시 Kyverno가 서명을 재검증합니다. 모든 AWS 접근은 OIDC로 통일해 Access Key 없이 배포합니다.",
+          title:"취약한 이미지와 출처가 검증되지 않은 이미지의 배포를 차단하다",
+          body:"이미지는 GitHub Actions → Trivy 취약점 검사 → ECR Push → KMS 기반 cosign 서명 → Kyverno 서명 검증 → EKS 배포로 이어지는 컨테이너 이미지 신뢰 체인을 보여줍니다.",
           image:{src:"sec-supplychain.png", cap:"CI/CD 공급망 보안 — 빌드 → KMS cosign 서명 → Kyverno 재검증"},
-          explanation:"<strong>취약점 검사와 이미지 출처 검증을 서로 다른 단계에서 수행했습니다.</strong> PR 단계에서 Gitleaks와 Trivy로 비밀정보 및 IaC의 HIGH/CRITICAL 취약점을 검사하고, 컨테이너 이미지는 CRITICAL 검사를 통과한 경우에만 ECR에 push합니다.<br><br>ECR 이미지는 태그가 아니라 digest 기준으로 KMS 비대칭 키를 이용해 cosign 서명합니다. Kyverno 검증 정책은 Audit에서 Enforce로 전환했으며, 지정된 <code>financial/*</code> ECR 이미지가 미서명이거나 검증에 실패하면 Admission 단계에서 배포를 차단합니다. 외부 GitHub Action도 commit SHA로 고정해 워크플로 의존성 변조 위험을 줄였습니다.",
+          explanation:"PR에서 Gitleaks로 비밀정보를, Trivy로 Terraform·Kubernetes 설정의 HIGH/CRITICAL 취약점을 검사하고, 컨테이너 이미지는 CRITICAL 검사를 통과한 경우에만 ECR에 push합니다. 이미지는 변경 가능한 태그가 아닌 digest 기준으로 AWS KMS 비대칭 키를 이용해 cosign 서명합니다.<br><br>Kyverno 검증 정책을 Audit에서 Enforce로 전환해 지정된 <code>financial/*</code> 이미지가 미서명이거나 검증에 실패하면 Admission에서 차단합니다. GitHub Actions의 AWS 접근은 OIDC를 사용하고 외부 Action은 commit SHA로 고정했습니다. kube-system과 정책 대상 외 이미지는 예외이며, cosign·Kyverno 서명 포맷 호환 문제를 수정한 이력도 있습니다. <strong>취약점 검사는 빌드 전에, 이미지 출처 검증은 배포 직전에 수행합니다.</strong>",
         },
         {
-          title:"탐지·감사 — 자체 구축한 컴플라이언스 감시",
-          body:"CloudTrail + EventBridge 커스텀 규칙 + Prowler로 Breakglass·Root 활동·IAM 권한상승·네트워크 변경 등을 감시하고, Prowler로 KISA ISMS-P·AWS FSBP를 스캔해 Athena+Glue 기반 SIEM으로 통합 조회합니다.",
+          title:"AWS 제어 영역의 고위험 변경을 감사 가능한 이벤트로 전환하다",
+          body:"이미지는 Breakglass Role, Root 활동, IAM 위반·권한상승, VPC·Security Group·NACL 변경, 반복 AccessDenied, S3 대상 PII 스캔을 탐지하고 Prowler·KISA ISMS-P 2023·AWS FSBP 결과와 CloudTrail·ALB 로그를 Glue/Athena 기반 SIEM에서 조회하는 구조를 보여줍니다.",
           image:{src:"sec-detection.png", cap:"탐지·컴플라이언스·감사 로깅 — CloudTrail · EventBridge · Prowler · SIEM"},
-          explanation:"<strong>AWS 제어 영역의 고위험 행위를 감사 가능한 이벤트로 바꿨습니다.</strong> Breakglass 사용, Root 활동, IAM 권한상승·지속성 확보, 파괴적 작업, 네트워크 변경 등 7종의 탐지 시나리오를 리전 중복을 포함한 9개의 EventBridge Rule 리소스로 코드화했습니다. Root 활동은 EventBridge와 CloudWatch Metric Filter 두 경로로 탐지하도록 설계했습니다.<br><br>Prowler CodeBuild에는 KISA ISMS-P 2023과 AWS FSBP 프로파일을 연결하고, CloudTrail·ALB·Prowler 데이터를 Glue 외부 테이블과 Athena Workgroup에서 조회할 수 있도록 SIEM 스키마를 구성했습니다. 현재 Rule 상태와 최신 스캔·쿼리 결과까지 저장소만으로 단정하지 않고, 실행 가능한 구성으로 구현한 범위를 설명합니다.",
+          explanation:"CloudTrail 관리 이벤트를 기반으로 Breakglass 사용, Root 활동, IAM 권한상승·지속성 확보, 파괴적 작업, 네트워크 변경 등 7종의 탐지 시나리오를 코드화하고 리전 중복을 포함한 9개 EventBridge Rule을 선언했습니다. Root 활동은 EventBridge와 CloudWatch Metric Filter의 두 경로로 탐지하도록 구성했습니다.<br><br>Prowler CodeBuild에는 KISA ISMS-P 2023과 AWS FSBP 프로파일을 연결하고 CloudTrail·ALB·Prowler 결과를 Glue 외부 테이블과 Athena Workgroup에서 조회하도록 SIEM 스키마를 구성했습니다. 보존 기준은 CloudTrail CloudWatch Logs 90일, CloudTrail S3 365일 Object Lock, VPC Flow Logs CloudWatch 30일, S3 archive 7년 lifecycle입니다. 규칙과 스키마는 실행 가능한 코드로 구성했지만 현재 Rule 상태와 최신 Prowler·Athena 결과까지 저장소만으로 단정하지 않습니다.",
         },
         {
-          title:"SecOps — AI 분석 + 2단계 승인형 자동 대응",
-          body:"탐지된 고위험 이벤트는 AI가 규정 근거와 영향 범위를 분석하고, Slack 1차 승인과 dry-run 결과 확인을 거친 뒤 2차 승인된 경우에만 실제 조치를 수행합니다.",
+          title:"AI가 분석하되, 실제 변경 권한은 사람에게 남기다",
+          body:"이미지는 위협 탐지 → 이벤트 분석 → Slack 1차 승인 → dry-run 안전성 검증 → 예상 결과 확인 → Slack 2차 승인 → 실제 격리·권한 회수 → 결과와 감사 로그 기록으로 이어지는 승인형 대응 흐름을 보여줍니다.",
           image:{src:"sec-hitl.png", cap:"SecOps 2단계 승인 — 탐지 · 분석 · 1차 승인 · dry-run · 2차 승인 · 실제 대응 · 감사 기록"},
-          explanation:"<strong>AI가 분석하되 실제 변경 권한은 사람에게 남겼습니다.</strong> CloudTrail IAM 이벤트와 Hubble 네트워크 이벤트의 중복을 제거하고 관련 이벤트를 Incident로 그룹화한 뒤, Bedrock이 검색된 금융 보안 규정 근거를 바탕으로 위험도와 대응 필요성을 분석합니다.<br><br>Slack 1차 승인 후 Kubernetes server-side dry-run 또는 IAM 회수 계획을 생성하고, 운영자가 예상 결과를 확인해 2차 승인한 경우에만 CiliumNetworkPolicy를 이용한 Pod 격리, 고권한 IAM 정책 회수 또는 신규 Access Key 비활성화를 수행합니다. 중요 네임스페이스 격리 거부, 중복 조치 제거, 승인 만료, 전역 dry-run 스위치와 감사 로그를 안전장치로 구성했습니다.",
+          explanation:"CloudTrail IAM 이벤트와 Hubble 네트워크 이벤트의 중복을 제거해 Incident로 그룹화하고, Bedrock이 검색된 금융 보안 규정 근거를 바탕으로 위험도·위반 가능성·대응 필요성을 분석합니다. Slack 1차 승인 후 Kubernetes server-side dry-run 또는 IAM 회수 계획과 예상 영향을 보여주고, 2차 승인된 경우에만 CiliumNetworkPolicy 기반 Pod ingress·egress 격리, 고권한 IAM 정책 회수 또는 신규 Access Key 비활성화를 수행합니다.<br><br>중요 네임스페이스 격리 거부, 동일 이벤트·대상의 중복 조치 제거, 승인 거절·만료 시 무변경 종료, <code>ISOLATION_DRY_RUN</code> 전역 스위치, Access Key ID 마스킹, Temporal 승인 상태·실행 이력 보존을 안전장치로 두고 승인자·판단 근거·dry-run·실행 결과를 기록합니다. <strong>인프라 변경 권한은 dry-run 결과를 확인한 사람의 최종 승인 뒤에만 열립니다.</strong>",
         },
       ],
     },
@@ -964,9 +964,9 @@ function renderDetail(p){
   if(p.security){
     let b=`<p>${p.security.intro}</p>`;
     (p.security.items||[]).forEach(it=>{
-      b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`;
       if(it.image) b+=figure(it.image);
-      if(it.explanation) b+=`<div class="di di-cont"><div class="di-body">${it.explanation}</div></div>`;
+      b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`;
+      if(it.explanation) b+=`<div class="di di-cont"><div class="di-body"><strong>코드로 구현한 내용</strong><br><br>${it.explanation}</div></div>`;
     });
     (p.security.images||[]).forEach(im=>b+=figure(im));
     add(p.security.label||'샌드박스 보안', p.security.short||'보안', b);
