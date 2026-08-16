@@ -148,14 +148,89 @@
   .detail-meta { display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
   .detail-title { font-size:clamp(28px,4.2vw,44px); font-weight:800; letter-spacing:-0.03em; line-height:1.12; margin-bottom:22px; max-width:20ch; }
   .detail-oneline { color:var(--ink-mid); font-size:17.5px; max-width:72ch; line-height:1.7; }
+  .detail-techline { color:var(--ink-dim); font-size:13.5px; max-width:72ch; line-height:1.65; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
 
   .stat-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0; background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:40px 0; }
   .stat { padding:24px 24px; border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
   .stat-val { font-family:var(--mono); font-size:25px; color:var(--ink); font-weight:500; line-height:1.05; letter-spacing:-0.02em; }
   .stat-label { font-size:12.5px; color:var(--ink-dim); margin-top:9px; }
 
-  .detail-body { padding: 52px 0 40px; }
+  .detail-body { padding: 40px 0 40px; }
+
+  /* ── 목차 (탭) ── */
+  .toc {
+    display:flex; gap:8px; overflow-x:auto; padding:6px 2px 14px;
+    margin-bottom:38px; border-bottom:1px solid var(--line);
+    scrollbar-width:none; scroll-behavior:smooth;
+    position:sticky; top:64px; z-index:20;
+    background:linear-gradient(var(--bg) 70%, rgba(247,246,243,0));
+  }
+  .toc::-webkit-scrollbar { display:none; }
+  .toc-item {
+    flex:0 0 auto; display:flex; align-items:center; gap:9px;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:10px 15px; cursor:pointer; font-family:var(--sans);
+    transition:border-color .18s, background .18s, transform .12s;
+  }
+  .toc-item:hover { border-color:var(--ink-dim); transform:translateY(-1px); }
+  .toc-item.active { background:var(--ink); border-color:var(--ink); }
+  .toc-num { font-family:var(--mono); font-size:11px; color:var(--ink-faint); font-weight:500; letter-spacing:0.02em; }
+  .toc-item.active .toc-num { color:rgba(255,255,255,0.55); }
+  .toc-label { font-size:14px; font-weight:550; color:var(--ink-mid); letter-spacing:-0.01em; white-space:nowrap; }
+  .toc-item.active .toc-label { color:var(--bg); }
+  @media (max-width:600px){ .toc { top:60px; } .toc-item { padding:9px 13px; } .toc-label { font-size:13px; } }
+
+  /* ── 챕터 (한 번에 하나) ── */
+  .chapter { display:none; animation:chapfade .38s ease; }
+  .chapter.active { display:block; }
+  @keyframes chapfade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+  .chap-head { display:flex; align-items:baseline; gap:14px; margin-bottom:22px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+  .chap-head .block-label { margin:0; padding:0; border:none; }
+  .chap-idx { font-family:var(--mono); font-size:12.5px; color:var(--accent); font-weight:500; letter-spacing:0.02em; flex:0 0 auto; }
+
+  /* ── 챕터 하단 이전/다음 ── */
+  .chap-footer { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-top:44px; padding-top:26px; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .chap-nav {
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:12px 20px; font-family:var(--sans); font-size:14.5px; font-weight:550; color:var(--ink);
+    cursor:pointer; transition:border-color .18s, background .18s, transform .12s; letter-spacing:-0.01em;
+  }
+  .chap-nav:hover { border-color:var(--ink-dim); transform:translateY(-1px); }
+  .chap-nav.next { background:var(--ink); color:var(--bg); border-color:var(--ink); margin-left:auto; }
+  .chap-nav.next:hover { background:#000; }
+  @media (max-width:600px){ .chap-nav { padding:11px 16px; font-size:13.5px; } }
+
   .block { margin-bottom:56px; }
+
+  /* ── 아키텍처 섹션 (소제목 → 이미지 → 해설) ── */
+  .arch-sec { margin:28px 0 4px; }
+  .arch-sec.arch-sec-after { margin:4px 0 8px; }
+  .arch-sec-title { font-size:17px; font-weight:700; color:var(--ink); letter-spacing:-0.01em; margin-bottom:8px; }
+  .arch-sec-body { color:var(--ink-mid); font-size:15.5px; line-height:1.75; }
+  .di-cont { margin-top:14px; }
+  .agent-list { margin:4px 0 8px; }
+  .agent-row { display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .agent-row:last-child { border-bottom:none; }
+  .agent-num { font-family:var(--mono); font-size:12px; color:var(--accent); font-weight:500; flex:0 0 auto; padding-top:2px; }
+  .agent-name { font-weight:650; color:var(--ink); font-size:15px; margin-right:10px; }
+  .agent-desc { color:var(--ink-mid); font-size:14.5px; line-height:1.6; }
+
+  /* ── 배경 3단계 흐름 SVG ── */
+  .bg-flow { margin:0 0 30px; padding:24px 20px; background:var(--surface); border:1px solid var(--line); border-radius:14px; }
+  .bg-flow svg { width:100%; height:auto; display:block; }
+  .bgf-eyebrow { font-family:var(--mono); font-size:12px; fill:var(--ink-dim); letter-spacing:0.04em; }
+  .bgf-eyebrow.bgf-accent { fill:var(--green); font-weight:500; }
+  .bgf-box { fill:var(--bg-soft); stroke:var(--line); stroke-width:1; }
+  .bgf-box-hl { fill:var(--ink); stroke:var(--ink); }
+  .bgf-title { font-family:var(--sans); font-size:15px; font-weight:700; fill:var(--ink); letter-spacing:-0.01em; }
+  .bgf-title-hl { fill:var(--bg); }
+  .bgf-sub { font-family:var(--sans); font-size:12.5px; fill:var(--ink-mid); }
+  .bgf-sub-hl { fill:rgba(255,255,255,0.72); }
+  .bgf-arr { stroke:var(--ink-dim); stroke-width:1.5; }
+  .bgf-note { font-family:var(--sans); font-size:13px; fill:var(--ink-dim); }
+  .bg-src { display:block; margin-top:6px; padding-top:16px; border-top:1px solid var(--line); font-size:12.5px; line-height:1.7; color:var(--ink-dim); }
+  .bg-src strong { color:var(--ink-mid); font-weight:600; }
+  @media (max-width:600px){ .bg-flow { padding:16px 12px; } }
   .block-label { font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:22px; padding-bottom:12px; border-bottom:1px solid var(--line); }
   .block > p { color:var(--ink-mid); font-size:16px; margin-bottom:16px; line-height:1.78; }
   .block > p strong { color:var(--ink); font-weight:600; }
@@ -315,6 +390,7 @@
       <div class="detail-meta" id="d-meta"></div>
       <h1 class="detail-title" id="d-title"></h1>
       <p class="detail-oneline" id="d-oneline"></p>
+      <p class="detail-techline" id="d-techline"></p>
       <div class="stat-strip" id="d-stats"></div>
     </div>
     <div class="detail-body" id="d-body"></div>
@@ -333,59 +409,158 @@
 const PROJECTS = [
   {
     id:"mas",
+    chapterOrder:["배경","아키텍처","기여","FinOps 워크플로","설계 결정","관측성","DR","보안","기술 스택"],
     title:"MAS — AI Agent 기반 클라우드 운영 자동화 플랫폼",
     role:"AWS CI/CD · EKS FinOps",
     team:"7인 팀 프로젝트",
-    oneline:"서비스망·운영망을 분리한 2-EKS / 4-VPC 위에 GitOps, 통합 관측성, Temporal 기반 FinOps·AIOps·SecOps와 Slack 승인형(HITL) 자동 대응을 구현한 금융 클라우드 운영 플랫폼.",
-    ministat:[["4","VPC"],["2","EKS"],["705","TF 리소스"],["1,202","커밋"]],
+    oneline:"금융권 망분리 규제 완화를 기점으로, AI가 금융 클라우드 인프라의 비용 최적화·장애 대응·보안 운영을 자동화하는 시대를 가정해 격리·감사·승인 통제를 갖춘 AI 운영 플랫폼을 설계한 프로젝트.",
+    techline:"서비스망·운영망을 분리한 2-EKS / 4-VPC 위에 GitOps, 통합 관측성, Temporal 기반 FinOps·AIOps·SecOps와 Slack 승인형(HITL) 자동 대응을 구현한 금융 클라우드 운영 플랫폼.",
+    ministat:[["-30%","운영비"],["~3분","AI 감지"],["12건/주","자동 탐지"],["5분","변경"]],
     stats:[
-      {val:"4",label:"VPC (망분리)"},
-      {val:"2",label:"EKS 클러스터"},
-      {val:"705",label:"Terraform 리소스 선언"},
-      {val:"83K+",label:"1차 작성 코드/설정 라인"},
-      {val:"1,202",label:"커밋"},
-      {val:"~85d",label:"개발 기간"},
+      {val:"-30%",label:"SaaS APM 대비 관측 운영비 절감"},
+      {val:"~3분",label:"AI 감지 시스템 동작 완료 (데모 실측)"},
+      {val:"12건/주",label:"이벤트 자동 탐지·분류 (데모 평균)"},
+      {val:"수시간→5분",label:"수동 대비 AI 변경 적용 시간 (데모 실측)"},
     ],
-    background:"2026년 4월 금융권 내부 업무용 SaaS 클라우드 탑재 규제 완화를 배경으로, <strong>망분리 제약이 유지되는 환경</strong>에서 비용·장애·보안 운영을 사람이 수작업으로 처리해야 하는 문제를 다뤘습니다. 탐지·분석·계획은 AI Agent가 수행하되 위험한 변경은 사람이 최종 승인하는 구조로, 규제 환경에서의 운영 자동화를 목표로 했습니다. (실제 고객 트래픽을 처리하는 프로덕션이 아닌 프로젝트 환경)",
+    background:"<strong>왜 시작했나 —</strong> 2026년 금융권 망분리 규제 완화는 금융권이 클라우드·AI를 받아들이기 시작한 신호였습니다. 다만 현재 열린 것은 <strong>비민감 데이터를 다루는 사무용 SaaS를 통제된 단말에서 쓰는 영역</strong>까지이고, 생성형 AI 예외 등 완화는 단계적으로 진행 중입니다. 이 프로젝트는 그 추세가 이어져 <strong>클라우드에 올라간 금융 서비스의 운영 자체에 AI가 개입하는 단계</strong>까지 온다고 가정하고, 그때 필수가 될 통제 체계를 선제적으로 구현한 것입니다.<br><br><strong>어떻게 방향을 잡았나 —</strong> 이 프로젝트는 클라우드 인프라 구성이 목적이므로, AI 운영 서비스를 클라우드 안에서 동작시키기 위해 만족해야 할 금융권 규제부터 조사했습니다. 그 결과 핵심 요건은 세 가지로 정리됐습니다 — <strong>격리</strong>(운영 영역을 외부와 단절), <strong>감사</strong>(접근을 단일 경로로 좁히고 기록), <strong>변경통제</strong>(인프라 변경은 사람의 확인을 거침). 이 세 요건을 동시에 만족시키는 것을 목표로, <strong>서비스망·격리 운영망·단일 관문·온프레 연동으로 분리한 4-VPC 구조에 사람 승인 기반(HITL) AI 자동화와 GCP DR을 얹은 아키텍처</strong>로 방향을 잡았습니다.<br><br><strong>왜 이 아키텍처인가 —</strong> <strong>격리</strong>는 AI 자동화가 외부 LLM 호출을 피할 수 없고 그 연결이 유출·침투 경로가 되므로, 운영망을 인터넷과 완전히 단절하고 LLM은 통제된 경로로만 호출하게 했습니다. <strong>감사</strong>는 격리된 운영망에 사람이 접근하는 순간 격리가 깨질 수 있어, 진입을 전담하는 별도 관문을 두어 모든 접속을 단일 경로로 좁히고 기록했습니다. <strong>변경통제</strong>는 운영 AI가 인프라 상태를 직접 바꾸는 만큼, 위험한 변경은 사람이 최종 승인한 뒤에만 반영되게 해 오조치를 차단했습니다.<br><br><span class='bg-src'><strong>참고 규제</strong> · 격리: 전자금융감독규정 제15조, 시행세칙 제2조의3·별표7(망분리 대체 정보보호통제) · 감사: 규정 제13조(접근기록·1년 보존), 제28조(관리자 행위 이중확인·모니터링) · 변경통제: 규정 제7조제7호(정보기술부문 내부통제), 제13조제5항 · 데이터: 제34조의3(암호화). 현행 규제는 온프레미스 전산을 전제로 하며, 본 프로젝트는 그 통제 수준을 클라우드 아키텍처로 재현한 것입니다.</span>",
     architecture:{
-      intro:"서비스·운영·접근·연동 목적으로 4개 VPC를 분리하고, 5개 VPC Peering으로 필요한 경로만 연결했습니다. AWS Active + GCP Warm Standby DR 구조입니다.",
-      images:[
-        {src:"arch-vpc.png", cap:"4-VPC 분리형 멀티 AZ 구조 (Service · Ops · Teleport · Headscale)"},
-        {src:"arch-security.png", cap:"AWS 보안 아키텍처 — 망분리 4-VPC · Teleport 단일 진입 · Defense-in-Depth"},
-      ],
-    },
-    contribution:{
-      intro:"7인 팀 프로젝트에서 <strong>AWS CI/CD 파이프라인</strong>과 <strong>EKS FinOps</strong> 두 영역을 담당했습니다.",
-      items:[
+      intro:"이 인프라는 두 축으로 구성됩니다. 온프레미스 ↔ AWS를 잇는 <strong>하이브리드 클라우드</strong> 축과, AWS ↔ GCP로 이어지는 <strong>멀티클라우드</strong> 축입니다. 중요 데이터와 통제권은 안쪽(온프레·격리 운영망)에 두고, 서비스는 클라우드에서 유연하게 운영하며, 장애 시 다른 클라우드로 넘어갈 수 있게 설계했습니다. 아래 네 그림이 이 구조를 격리·배포·하이브리드·DR 순으로 보여줍니다.",
+      sections:[
         {
-          title:"AWS CI/CD — 망분리 환경의 내부 GitOps 파이프라인",
-          body:"GitHub Actions(OIDC)에서 시작해 ECR 이미지 빌드·Trivy 스캔·Cosign 서명을 거치고, CodeBuild가 매니페스트를 갱신해 Internal Gitea에 push하면 Argo CD가 EKS로 동기화하는 파이프라인을 구성했습니다. 외부 Git에 인프라 종속값을 고정하지 않기 위해 placeholder를 유지하고, CodeBuild bootstrap이 Terraform 출력값·AWS 조회값으로 치환한 복사본만 내부 Git에 push하도록 설계했습니다.",
-          flow:["GitHub Actions","ECR · Trivy · Cosign","CodeBuild","Internal Gitea","Argo CD","EKS"],
+          title:"① 목적별 4-VPC 격리",
+          body:"VPC를 목적에 따라 넷으로 분리했습니다. <strong>VPC1 서비스망</strong>은 인터넷에 노출된 고객 서비스, <strong>VPC2 운영망</strong>은 인터넷과 완전히 격리된 AI 운영·관제, <strong>VPC3 관문</strong>은 Teleport를 통한 사람의 단일 진입 경로, <strong>VPC4 연동</strong>은 온프레미스·GCP를 잇는 Headscale 터널을 담당합니다. 노출 영역과 통제 영역을 VPC 단위로 물리적으로 분리한 것이 핵심입니다.",
+          image:{src:"arch-vpc.png", cap:"4-VPC 분리형 멀티 AZ 구조 (Service · Ops · Teleport · Headscale)"},
+        },
+        {
+          title:"② 외부 의존 없는 내부 GitOps 배포",
+          body:"코드는 GitHub에 있지만, GitHub Actions가 이미지를 빌드해 AWS ECR에 올리고, CodeBuild가 그 이미지를 가져오는 매니페스트(YAML)를 내부 Gitea에 반영하면, 중앙 Argo CD가 VPC1·VPC2로 배포합니다. 이미지 자체는 ECR에, Gitea에는 그 이미지를 참조하는 YAML만 두어, 실제 클러스터 배포가 내부에서만 이뤄지도록 해 운영망 격리를 유지합니다.",
+          flow:["GitHub","Actions · 이미지 빌드","ECR","CodeBuild · Gitea YAML","Argo CD","VPC1 · VPC2"],
           image:{src:"arch-cicd.png", cap:"AWS CI/CD 및 GitOps 아키텍처 — Source → 보안 Gate → ECR 서명 이미지 → 내부 Gitea → Argo CD → EKS"},
         },
         {
-          title:"EKS FinOps — 이벤트 기반 사전 증설 계획",
-          body:"EventBridge Scheduler가 비즈니스 이벤트로 FinOps Workflow를 호출하면, 클러스터 상태(RPS·node·pod·RDS CPU)를 확인하고 과거 이벤트 기준으로 Peak 용량을 예측한 뒤, 분산 전략별 증설 비용·안정성을 비교해 과잉 프로비저닝을 최소화한 계획을 산정했습니다. 계산 근거를 함께 남겨 블랙박스가 아닌 <strong>근거 있는 자동화</strong>를 목표로 했습니다.",
-          code:'<span class="c"># 예: 필요 Pod 산정 근거</span>\n예상 Peak RPS      = 1932\nPod 1개 처리 기준  = 28 RPS\n필요 Pod = <span class="k">ceil</span>(1932 / 28) = 69',
+          title:"③ 온프레–클라우드 하이브리드",
+          body:"중요 고객정보는 온프레미스 경계 안에 보관하고, 운영 메트릭만 WireGuard 암호화 터널로 클라우드에 전송합니다. 데이터 원본은 내부에 두고 관측 데이터만 내보내는 구조입니다.",
+          image:{src:"arch-onprem.png", cap:"온프레미스 ↔ AWS 하이브리드 — 중요정보는 온프레 보관, 운영 메트릭만 WireGuard 터널로 전송"},
+        },
+        {
+          title:"④ AWS–GCP 멀티클라우드 DR",
+          body:"단일 클라우드 장애에 대비해 GCP를 DR로 두는 멀티클라우드를 고려했습니다. 상세한 전환 설계는 DR 챕터에서 다룹니다.",
+          image:{src:"arch-dr.png", cap:"GCP DR / 트래픽 아키텍처 — AWS Active / GCP Warm Standby"},
+        },
+      ],
+    },
+    contribution:{
+      intro:"7인 팀 프로젝트에서 <strong>AWS CI/CD·GitOps 파이프라인</strong>과 <strong>EKS FinOps 워크플로</strong> 두 영역을 직접 설계·구현했습니다. 전자는 망분리 제약 위에서 배포를 자동화하는 문제였고, 후자는 이벤트성 대량 트래픽을 AI가 사전에 대비하는 문제였습니다.",
+      items:[
+        {
+          title:"CI/CD · GitOps — 완전 격리 환경에서 GitOps 성립시키기",
+          imageFirst:true,
+          image:{src:"arch-cicd.png", cap:"AWS CI/CD 및 GitOps 아키텍처 — GitHub Actions(빌드·스캔·서명) → ECR → 내부 Gitea 매니페스트 → Argo CD → EKS"},
+          body:"<strong>문제</strong> — 운영망(VPC2)이 인터넷과 완전히 격리되어 GitHub Actions 러너가 내부 Gitea나 Argo CD에 직접 접근할 수 없었습니다. 일반적인 'CI가 클러스터에 직접 배포'하는 방식이 성립하지 않는 환경이었습니다.<br><br><strong>구조</strong> — 책임을 외부와 내부로 분리했습니다. 외부의 <strong>GitHub Actions</strong>는 이미지 공급망(빌드·Trivy 스캔·Cosign KMS 서명)을 담당하고 완성된 이미지를 ECR에 저장합니다. 격리망 안의 <strong>CodeBuild</strong>는 그 ECR 이미지를 가리키는 <strong>매니페스트</strong>를 내부 Gitea에 갱신하고, VPC2의 <strong>중앙 Argo CD</strong>가 Gitea 변경을 감지해 ECR에서 이미지를 가져와 로컬 Ops EKS(VPC2)와 원격 등록된 Service EKS(VPC1)에 배포합니다. 배포는 kubectl이 아니라 <strong>Git commit으로만</strong> 이뤄져, 격리를 깨지 않으면서 GitOps 원칙을 지켰습니다.<br><br><strong>핵심 결정</strong> — 외부 Git에는 계정·VPC·엔드포인트 같은 환경 종속값을 고정하지 않고 placeholder로 두었습니다. Bootstrap이 AWS API로 실제 값을 조회해 내부에서 치환한 복사본만 내부 Gitea에 push하도록 설계해, seed의 재사용성과 격리를 동시에 확보했습니다.",
+          flow:["GitHub Actions · 빌드·스캔·서명","ECR 저장","CodeBuild · Gitea 매니페스트","Argo CD","ECR pull → VPC1·VPC2"],
+        },
+        {
+          title:"FinOps — 이벤트성 대량 트래픽 사전 증설 계획",
+          imageFirst:true,
+          image:{src:"finops-scenario.png", cap:"FinOps 시나리오 — 35만 명 대상 이벤트 푸시 전, 비즈니스 이벤트 감지 → AI 분석 → 리포트 생성 → Slack 알림 → 운영자 확인 → 리포트 질의"},
+          body:"<strong>문제</strong> — 이벤트 알림이 35만 명 규모 고객에게 발송되면 짧은 시간에 트래픽이 집중됩니다. 트래픽이 터진 뒤 HPA만 기다리면 노드 부팅·이미지 풀·캐시 warm-up에 20분 이상 걸려 Peak를 흡수할 수 없습니다. 실시간 반응이 아니라 이벤트 시각 기준의 <strong>사전 증설</strong>이 필요했습니다.<br><br><strong>구조</strong> — 이벤트 시나리오와 과거 트래픽 이력을 입력받아, 10개의 <strong>AI Agent</strong>가 순차적으로 Peak RPS 예측 → 필요 Pod·추가 Node 산정 → RDS 병목 예측 → 비용 산정까지 수행하고, <strong>Temporal</strong>이 워크플로의 실행 순서와 이력을 관리합니다. 안정성·균형·비용 세 가지 분산 전략을 점수화해 추천안을 제시합니다.<br><br><strong>핵심 결정</strong> — LLM의 <strong>할루시네이션</strong>을 막기 위해 Pod 수·비용·병목 같은 핵심 수치는 Python <strong>결정론적 계산식</strong>으로 고정했습니다. AI는 그 계산 결과를 정해진 역할에 맞게 판단하되, 판단 결과가 예산·정책 같은 경계값을 넘으면 해당 계획을 배제하고 <strong>다른 분산 전략으로 재계획(replan)</strong>하도록 설계했습니다. 각 Agent가 계산 근거(evidence)를 남겨 추적 가능한 자동화를 지향했고, 최종 계획은 자동 실행하지 않고 <strong>사람이 승인(HITL)</strong>합니다.<br><br><strong>참고</strong> — 35만 명 규모와 과거 이력은 실제 운영 데이터가 아닌 데모 시나리오로 구성한 값입니다. 예측 로직 자체는 실제 과거 이력이 주어지면 그대로 동작하도록 설계했습니다.",
         },
       ],
     },
     monitoring:{
       intro:"Service VPC의 로그·메트릭·트레이스는 Alloy가 수집해 내부 NLB를 통해 Ops VPC의 Loki·Thanos·Tempo로 전달하고, Grafana에서 통합 조회합니다. AWS 지표는 API로 조회해 NLB 부하를 줄였습니다.",
       image:{src:"arch-monitor.png", cap:"통합 관측성 — Service VPC(NLB)와 AWS Managed(API 조회)를 Grafana로 통합"},
+      images:[
+        {src:"obs-thanos.png", cap:"Thanos — PromQL로 financial-ops-eks 클러스터 메트릭 통합 조회 (container CPU 등 119 series)"},
+        {src:"obs-loki.png", cap:"Loki — stock-demo 네임스페이스 로그 볼륨·레벨별 집계와 라벨 기반 검색"},
+        {src:"obs-tempo.png", cap:"Tempo — stock-demo-api 서비스의 HTTP 요청 트레이스 (Trace ID·Duration)"},
+        {src:"obs-cloudwatch.png", cap:"CloudWatch — EC2 인스턴스별 CPU 사용률을 Grafana에서 API로 조회"},
+      ],
     },
     dr:{
-      intro:"평상시 AWS를 Active로, GCP를 Warm Standby로 두고 Route 53 Failover로 전환합니다. Split-brain 방지를 위해 어느 시점에도 Write 원본은 한 곳만 유지되도록 설계했습니다.",
+      intro:"평상시 AWS를 Active로, GCP를 Warm Standby로 두고 Route 53 Failover로 전환합니다. Split-brain 방지를 위해 어느 시점에도 Write 원본은 한 곳만 유지되도록 설계했습니다.<br><br><strong>RTO(복구 목표 시간)</strong>는 failover·failback 목표 10분으로 잡았고, 실제 관측값은 약 5분입니다. <strong>RPO(복구 목표 시점)</strong>는 목표 0을 지향하되, 실제로는 GCP DMS의 복제 지연(lag)만큼 데이터 손실이 발생할 수 있습니다.",
       image:{src:"arch-dr.png", cap:"GCP DR / 트래픽 아키텍처 — AWS Active / GCP Warm Standby"},
     },
+    security:{
+      label:"보안 아키텍처", short:"보안",
+      intro:"<strong>예방부터 승인형 자동 대응까지 —</strong> MAS는 금융 클라우드 환경을 가정해 서비스망과 운영망을 분리하고, 관리자·CI·워크로드마다 별도의 인증 경로를 적용했습니다. Cilium과 Istio로 클러스터 통신을 통제하고, Trivy·cosign·Kyverno로 빌드부터 배포까지 이미지 무결성을 검증했습니다. CloudTrail 기반 탐지와 컴플라이언스 조회 체계를 구성했으며, 고위험 이벤트는 AI 분석과 두 번의 운영자 승인, dry-run 검증을 통과한 경우에만 실제 격리 또는 IAM 권한 회수가 수행되도록 설계했습니다.",
+      highlights:["4-VPC 망분리","OIDC · Pod Identity","Cilium Enforce","Signed Image Only","CloudTrail · SIEM","2-Step HITL"],
+      items:[
+        {
+          title:"01. 망분리와 Teleport 단일 진입",
+          body:"<strong>서비스와 운영 권한의 장애 범위를 분리했습니다.</strong> 외부 서비스를 제공하는 Service EKS와 높은 권한을 가진 운영 자동화·보안 대응 시스템이 실행되는 Ops EKS를 별도 VPC로 분리해, 서비스 침해나 장애가 운영 제어 영역으로 전파되는 범위를 제한했습니다.<br><br>운영자 접근은 MFA가 적용된 Teleport 경로로 일원화하고, 운영망은 VPC Endpoint를 통해 AWS 서비스에 접근하도록 설계했습니다. 외부 서비스 트래픽은 Route 53·WAF·ALB·TLS·Istio Gateway를 순차적으로 통과하며, RDS는 비공개 서브넷에 배치하고 별도의 KMS 키로 암호화했습니다.",
+          image:{src:"sec-overview.png", cap:"AWS 보안 아키텍처 — 4-VPC 망분리 · Teleport 단일 진입 · 계층 방어"},
+        },
+        {
+          title:"02. 주체별 자격증명 분리와 장기 키 의존도 최소화",
+          body:"<strong>사람·CI·워크로드의 인증 경로를 분리했습니다.</strong> 운영자는 MFA가 적용된 IAM 계정을 사용하고, GitHub Actions는 OIDC로 AWS 단기 세션을 발급받습니다. EKS 워크로드에는 ServiceAccount 단위로 Pod Identity를 연결해 애플리케이션마다 필요한 AWS 권한을 분리했습니다.<br><br>데이터베이스 비밀번호와 API 자격증명은 코드나 이미지에 포함하지 않고 Secrets Manager에 저장했습니다. External Secrets Operator가 Pod Identity로 필요한 값만 조회해 Kubernetes Secret으로 동기화합니다. 운영 모드의 신규 Access Key 발급 차단, 14자·복잡도·90일 비밀번호 정책, RDS Secret 로테이션과 용도별 KMS CMK도 함께 구성했습니다.",
+          image:{src:"sec-identity.png", cap:"주체별 인증 — MFA · GitHub Actions OIDC · EKS Pod Identity · Secrets Manager"},
+        },
+        {
+          title:"03. Audit에서 Enforce까지, 실제 통신을 기준으로 완성한 정책",
+          body:"<strong>Cilium 네트워크 정책을 Audit에서 Enforce로 단계적으로 전환했습니다.</strong> ingress·egress를 기본 차단하고 네임스페이스·Pod label·port·FQDN을 기준으로 필요한 통신만 허용했습니다. 전환 후 발생한 DNS·API Server·Temporal·Istio 등의 실제 DROP과 서비스 통신 장애를 분석해 allow 정책을 보완했습니다.<br><br>약 90개의 Cilium 정책 객체를 정의하고 57개 정책 파일을 GitOps 배포 목록에 연결했습니다. Istio에는 mesh 기본 STRICT mTLS 정책을 선언하고, Tetragon에는 프로세스 실행·권한상승·민감 파일 접근·커널 모듈 로드를 관찰하는 정책을 구성했습니다. MAS·Temporal·Istio 등 일부 인프라 네임스페이스는 안정성을 위해 default-deny 대상에서 제외했습니다.",
+          image:{src:"sec-runtime.png", cap:"클러스터 내부 다층 방어 — Cilium · Istio · Kyverno · Tetragon · RBAC"},
+        },
+        {
+          title:"04. 취약하고 출처가 검증되지 않은 이미지의 배포 차단",
+          body:"<strong>취약점 검사와 이미지 출처 검증을 서로 다른 단계에서 수행했습니다.</strong> PR 단계에서는 Gitleaks와 Trivy로 비밀정보 및 IaC의 HIGH/CRITICAL 취약점을 검사하고, 컨테이너 이미지는 CRITICAL 검사를 통과한 경우에만 ECR에 push합니다.<br><br>ECR 이미지는 변경 가능한 태그가 아니라 digest를 기준으로 KMS 비대칭 키를 이용해 cosign 서명했습니다. Kyverno 검증 정책은 Audit에서 Enforce로 전환했으며, 지정된 <code>financial/*</code> ECR 이미지에 서명이 없거나 검증에 실패하면 Admission 단계에서 배포를 차단합니다. GitHub Actions의 AWS 인증에는 OIDC를 사용하고 외부 Action은 commit SHA로 고정했습니다.",
+          image:{src:"sec-supplychain.png", cap:"CI/CD 공급망 보안 — 빌드 → KMS cosign 서명 → Kyverno 재검증"},
+        },
+        {
+          title:"05. AWS 제어 영역의 고위험 변경을 감사 이벤트로 전환",
+          body:"<strong>CloudTrail 관리 이벤트를 기준으로 탐지 시나리오를 코드화했습니다.</strong> Breakglass 사용, Root 활동, IAM 권한상승·지속성 확보, 파괴적 작업과 네트워크 변경 등 7종의 탐지 시나리오를 리전 중복을 포함한 9개의 EventBridge Rule 리소스로 구성했습니다. Root 활동은 EventBridge와 CloudWatch Metric Filter의 두 경로로 탐지하도록 설계했습니다.<br><br>Prowler CodeBuild에는 KISA ISMS-P 2023과 AWS FSBP 프로파일을 연결하고, CloudTrail·ALB·Prowler 데이터를 Glue 외부 테이블과 Athena Workgroup에서 조회할 수 있도록 SIEM 스키마를 구성했습니다. 이는 실행 가능한 구성 기준이며, 현재 Rule 상태와 최신 스캔·쿼리 결과까지 저장소만으로 단정하지 않습니다.",
+          image:{src:"sec-detection.png", cap:"탐지·컴플라이언스·감사 로깅 — CloudTrail · EventBridge · Prowler · SIEM"},
+        },
+        {
+          title:"06. AI가 분석하되, 실제 변경 권한은 사람에게",
+          body:"<strong>탐지에서 실제 대응까지 이어지는 승인형 SecOps 워크플로를 구현했습니다.</strong> CloudTrail IAM 이벤트와 Hubble 네트워크 이벤트의 중복을 제거하고 관련 이벤트를 Incident로 그룹화한 뒤, Bedrock이 검색된 금융 보안 규정 근거를 바탕으로 위험도와 대응 필요성을 분석합니다.<br><br>고위험 이벤트도 즉시 실행하지 않습니다. Slack 1차 승인 후 Kubernetes server-side dry-run 또는 IAM 회수 계획을 생성하고, 운영자가 예상 결과를 확인해 2차 승인한 경우에만 CiliumNetworkPolicy를 이용한 Pod 격리, 고권한 IAM 정책 회수 또는 신규 Access Key 비활성화를 수행합니다. 중요 네임스페이스 격리 거부, 중복 조치 제거, 승인 만료, 전역 dry-run 스위치와 감사 로그를 안전장치로 두었습니다.",
+          image:{src:"sec-hitl.png", cap:"SecOps 2단계 승인 — 탐지 · 규정 기반 분석 · 1차 승인 · dry-run · 2차 승인 · 실제 대응 · 감사 기록"},
+        },
+      ],
+    },
     demo:{
-      intro:"이벤트를 선택해 FinOps Workflow를 실행하면 Agent들이 순차적으로 판단하고, 조정 전/후 Peak·필요 Pod·예상 비용과 Agent 진행 로그를 한 화면에서 확인합니다. 세 가지 분산 전략(비용/안정성/균형)을 점수화해 추천안을 제시하고, 품질 검증을 통과한 최종 리포트는 Slack #finops-approvals로도 전달되어 운영자가 즉시 Dry-run 승인 또는 재계획을 결정할 수 있습니다.",
-      images:[
-        {src:"finops-dash1.png", cap:"FinOps MAS Control 대시보드 — 조정 전 1346 → 조정 후 1932 rps · 필요 Pod 69 · 예상 $93.33 · Agent 진행 로그"},
-        {src:"finops-dash2.png", cap:"보고서 대화 — '왜 Pod가 69개 필요해?' → ceil(1932 / 28) = 69, 계산 근거와 사용한 조회 도구까지 응답"},
-        {src:"finops-compare.png", cap:"후보 계획 비교 — 비용 우선 / 안정성 우선 / 균형 · p95·위험도·점수 · 품질 검증 통과"},
-        {src:"finops-report.png", cap:"최종 리포트 — 트래픽 예측·비용 분석·정책 검증·실행 계획(T-10m~T-0)·Fallback·사후 학습"},
-        {src:"finops-slack.png", cap:"Slack #finops-approvals — 계획 보고서 전달 · Dry-run 승인 또는 재계획 결정"},
+      intro:"이벤트 시나리오를 선택하면 AI Agent들이 순차적으로 계산해 사전 증설 계획을 만들고, 운영자는 각 워크플로 단계를 UI에서 확인합니다. 각 단계마다 <strong>채팅으로 'why'를 물어</strong> 왜 그 값이 나왔는지 계산 근거를 확인하거나, 입력 값을 바꾸면 결과가 어떻게 달라지는지 질문하고 <strong>변경된 값으로 재계산</strong>을 요청할 수 있습니다. 최종적으로 트래픽 예측·비용 분석·정책 검증·실행 계획을 담은 리포트를 확인하고, 이 리포트는 Slack으로도 받아볼 수 있습니다.",
+      images:[],
+      imageSections:[
+        {
+          title:"① 대시보드 — Agent별 요청·응답 확인",
+          image:{src:"finops-dash1.png", cap:"FinOps MAS Control 대시보드 — 조정 전 1346 → 조정 후 1932 rps · 필요 Pod 69 · 예상 $93.33"},
+          body:"이벤트를 선택하면 Agent들이 순차 실행되고, 각 Agent가 받은 요청과 반환한 결과를 확인할 수 있습니다. 조정 전/후 Peak RPS·필요 Pod·예상 비용이 채워지고, 오른쪽 로그에서 진행 상황을 따라갈 수 있습니다.",
+        },
+        {
+          title:"② 단계별 대화 — 판단 근거 질의",
+          image:{src:"finops-dash2.png", cap:"단계별 대화 — '왜 Pod가 69개 필요해?' → ceil(1932 / 28) = 69"},
+          body:"FinOps 워크플로가 끝나면, 각 단계의 Agent에게 왜 그런 판단을 했는지, 입력이 다른 값이라면 어떤 결과가 나올지를 대화 형식으로 물어볼 수 있습니다. 계산식과 근거, 사용한 조회 도구까지 함께 응답합니다.",
+        },
+        {
+          title:"③ 후보 비교 — 세 가지 전략",
+          image:{src:"finops-compare.png", cap:"후보 계획 비교 — 비용 우선 / 안정성 우선 / 균형 · p95·위험도·점수"},
+          body:"안정성·균형·비용 세 가지 정해진 전략에 따른 후보군을 나란히 비교할 수 있습니다. 각 후보의 p95 지연·위험도·종합 점수를 보고 품질 검증을 통과한 추천안을 선택합니다.",
+        },
+        {
+          title:"④ 최종 리포트",
+          image:{src:"finops-report.png", cap:"최종 리포트 — 트래픽 예측·비용 분석·정책 검증·실행 계획(T-20m~T-0)·Fallback"},
+          body:"확정된 계획은 트래픽 예측·비용 분석·정책 검증·실행 계획(T-20m부터 T-0까지의 증설 타임라인)·Fallback을 담은 리포트로 정리됩니다.",
+        },
+        {
+          title:"⑤ Slack 전달",
+          image:{src:"finops-slack.png", cap:"Slack 리포트 전달 — 계획 요약·Peak RPS·필요 Pod·예상 비용·주요 위험"},
+          body:"리포트는 Slack으로도 전달되어, 운영자가 UI를 계속 보지 않아도 계획 요약·Peak RPS·필요 Pod·예상 비용·주요 위험을 받아볼 수 있습니다.",
+        },
+      ],
+      agentsTitle:"10개 AI Agent의 순차 판단",
+      agentsIntro:"각 Agent는 정해진 역할의 계산·판단만 수행하고 결과를 다음 Agent에 넘깁니다. 핵심 수치는 결정론적 계산식으로 고정하고, LLM은 그 결과에 대한 평가와 설명을 담당합니다.",
+      agents:[
+        {name:"Cluster State", desc:"현재 Pod·HPA·Node Group·유휴 워크로드·RDS CPU 등 인프라 상태를 수집. CloudWatch 실패 시 seeded 값으로 fallback하고 출처를 남김"},
+        {name:"Business Control", desc:"이벤트 등급·VIP/일반 사용자 수·허용 지연을 해석하고, 과거 동일 이벤트의 평균 Peak RPS를 기준선으로 계산"},
+        {name:"Demand Shaping", desc:"VIP는 즉시, 일반 사용자는 분산 발송. 10/15/20분 세 가지 분산 후보(안정성·균형·비용)를 생성"},
+        {name:"Traffic Forecast", desc:"후보별 VIP·일반 Peak RPS를 계산하고 필요 Pod를 산정 (필요 Pod = ceil(Peak RPS / 28))"},
+        {name:"Bottleneck Capacity", desc:"Pod 준비율과 Peak 시점 RDS CPU를 추정해 병목을 검증. 위험하면 분산 시간을 늘려 재예측 요청"},
+        {name:"Infra Capacity Planning", desc:"필요 Pod를 Node 수로 변환하고, 부팅·풀·warm-up 시간을 역산해 T-24m/T-16m 같은 증설 시점을 계획"},
+        {name:"Cost", desc:"Cost Explorer·CUR 기반으로 후보별 증분 비용과 유휴 자원 절감액을 반영한 순비용을 계산"},
+        {name:"Unit Economics", desc:"순비용을 예상 business value와 비교해 비용 효율을 평가하고 승인 필요 여부를 판단"},
+        {name:"Policy & Guardrail", desc:"허용/금지 action·예산·readiness를 검사하고, 정상 실행이 어려우면 fallback 계획을 생성"},
+        {name:"Postmortem Learning", desc:"과거 이력과 현재 예측을 비교해 편차를 정리 (planning 단계 학습 자료 생성)"},
       ],
     },
     decisions:[
@@ -671,109 +846,243 @@ function figure(img){
   </figure>`;
 }
 
+function bgFlowSVG(){
+  return `<div class="bg-flow">
+  <svg viewBox="0 0 680 300" role="img" aria-label="규제 완화에서 프로젝트로 이어지는 3단계 흐름" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="bgArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="var(--ink-dim)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+    <text x="105" y="40" text-anchor="middle" class="bgf-eyebrow">현재</text>
+    <text x="340" y="40" text-anchor="middle" class="bgf-eyebrow">진행 중</text>
+    <text x="575" y="40" text-anchor="middle" class="bgf-eyebrow bgf-accent">이 프로젝트</text>
+
+    <rect x="30" y="55" width="150" height="150" rx="14" class="bgf-box"/>
+    <text x="105" y="96" text-anchor="middle" class="bgf-title">규제 완화</text>
+    <text x="105" y="124" text-anchor="middle" class="bgf-sub">망분리 일부 해제</text>
+    <text x="105" y="149" text-anchor="middle" class="bgf-sub">비민감 SaaS만</text>
+    <text x="105" y="174" text-anchor="middle" class="bgf-sub">사무 영역 한정</text>
+
+    <rect x="265" y="55" width="150" height="150" rx="14" class="bgf-box"/>
+    <text x="340" y="96" text-anchor="middle" class="bgf-title">단계적 확장</text>
+    <text x="340" y="124" text-anchor="middle" class="bgf-sub">생성형 AI 예외</text>
+    <text x="340" y="149" text-anchor="middle" class="bgf-sub">논의 진행 중</text>
+    <text x="340" y="174" text-anchor="middle" class="bgf-sub">더 중요한 영역으로</text>
+
+    <rect x="500" y="55" width="150" height="150" rx="14" class="bgf-box bgf-box-hl"/>
+    <text x="575" y="96" text-anchor="middle" class="bgf-title bgf-title-hl">AI 운영 자동화</text>
+    <text x="575" y="124" text-anchor="middle" class="bgf-sub bgf-sub-hl">서비스에 AI 개입</text>
+    <text x="575" y="149" text-anchor="middle" class="bgf-sub bgf-sub-hl">격리·승인·감사</text>
+    <text x="575" y="174" text-anchor="middle" class="bgf-sub bgf-sub-hl">선제 구현</text>
+
+    <line x1="188" y1="130" x2="255" y2="130" class="bgf-arr" marker-end="url(#bgArrow)"/>
+    <line x1="423" y1="130" x2="490" y2="130" class="bgf-arr" marker-end="url(#bgArrow)"/>
+
+    <text x="340" y="250" text-anchor="middle" class="bgf-note">규제가 이 방향으로 이어진다고 가정하고,</text>
+    <text x="340" y="272" text-anchor="middle" class="bgf-note">그때 필수가 될 통제 체계를 미리 만든 프로젝트</text>
+  </svg>
+</div>`;
+}
+
 function renderDetail(p){
   document.getElementById('d-meta').innerHTML =
     `<span class="proj-role">${p.role}</span><span class="proj-team">${p.team}</span>`;
   document.getElementById('d-title').textContent = p.title;
   document.getElementById('d-oneline').textContent = p.oneline;
+  const techEl=document.getElementById('d-techline');
+  if(p.techline){ techEl.textContent=p.techline; techEl.style.display=''; } else { techEl.style.display='none'; }
   document.getElementById('d-stats').innerHTML =
     (p.stats||[]).map(s=>`<div class="stat"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
-  let html='';
+  // 각 챕터를 {label, short, body} 배열로 수집 (short = 목차 탭에 쓸 짧은 라벨)
+  const chapters=[];
+  const add=(label,short,body)=>{ if(body) chapters.push({label,short,body}); };
 
-  html+=`<div class="block"><div class="block-label">문제 · 배경</div><p>${p.background}</p></div>`;
+  add('문제 · 배경','배경',`${p.id==='mas'?bgFlowSVG():''}<p>${p.background}</p>`);
 
   if(p.architecture){
-    html+=`<div class="block"><div class="block-label">아키텍처</div><p>${p.architecture.intro}</p>`;
-    (p.architecture.images||[]).forEach(im=>html+=figure(im));
-    (p.architecture.flows||[]).forEach(fl=>{
-      html+=`<div class="di"><div class="di-title" style="font-size:14px;color:var(--cyan)">${fl.label} 흐름</div>`;
-      html+=`<div class="flow">`+fl.nodes.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<fl.nodes.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div></div>`;
+    let b=`<p>${p.architecture.intro}</p>`;
+    (p.architecture.sections||[]).forEach(sec=>{
+      b+=`<div class="arch-sec"><div class="arch-sec-title">${sec.title}</div></div>`;
+      if(sec.image) b+=figure(sec.image);
+      if(sec.body||sec.flow){
+        b+=`<div class="arch-sec arch-sec-after">`;
+        if(sec.body) b+=`<div class="arch-sec-body">${sec.body}</div>`;
+        if(sec.flow) b+=`<div class="flow">`+sec.flow.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<sec.flow.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
+        b+=`</div>`;
+      }
     });
-    html+=`</div>`;
+    (p.architecture.images||[]).forEach(im=>b+=figure(im));
+    (p.architecture.flows||[]).forEach(fl=>{
+      b+=`<div class="di"><div class="di-title" style="font-size:14px;color:var(--cyan)">${fl.label} 흐름</div>`;
+      b+=`<div class="flow">`+fl.nodes.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<fl.nodes.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div></div>`;
+    });
+    add('아키텍처','아키텍처',b);
   }
 
   if(p.contribution){
-    html+=`<div class="block"><div class="block-label">담당 · 기여</div><p>${p.contribution.intro}</p>`;
+    let b=`<p>${p.contribution.intro}</p>`;
     p.contribution.items.forEach(it=>{
-      html+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div>`;
-      if(it.flow) html+=`<div class="flow">`+it.flow.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<it.flow.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
-      if(it.code) html+=`<div class="codeblock">${it.code}</div>`;
-      html+=`</div>`;
-      if(it.image) html+=figure(it.image);
-      (it.images||[]).forEach(im=>html+=figure(im));
+      if(it.imageFirst && it.image){
+        b+=`<div class="di"><div class="di-title">${it.title}</div>`;
+        b+=`</div>`;
+        b+=figure(it.image);
+        b+=`<div class="di di-cont"><div class="di-body">${it.body}</div>`;
+        if(it.flow) b+=`<div class="flow">`+it.flow.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<it.flow.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
+        if(it.code) b+=`<div class="codeblock">${it.code}</div>`;
+        b+=`</div>`;
+      } else {
+        b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div>`;
+        if(it.flow) b+=`<div class="flow">`+it.flow.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<it.flow.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
+        if(it.code) b+=`<div class="codeblock">${it.code}</div>`;
+        b+=`</div>`;
+        if(it.image) b+=figure(it.image);
+        (it.images||[]).forEach(im=>b+=figure(im));
+      }
     });
-    html+=`</div>`;
+    add('담당 · 기여','기여',b);
   }
 
   if(p.highlights){
-    html+=`<div class="block"><div class="block-label">구현 하이라이트</div><p>${p.highlights.intro}</p>`;
-    p.highlights.items.forEach(it=>{
-      html+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`;
-    });
-    html+=`</div>`;
+    let b=`<p>${p.highlights.intro}</p>`;
+    p.highlights.items.forEach(it=>{ b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`; });
+    add('구현 하이라이트','하이라이트',b);
   }
 
   if(p.sandbox){
-    html+=`<div class="block"><div class="block-label">격리 샌드박스</div><p>${p.sandbox.intro}</p>`;
-    (p.sandbox.images||[]).forEach(im=>html+=figure(im));
-    html+=`</div>`;
+    let b=`<p>${p.sandbox.intro}</p>`;
+    (p.sandbox.images||[]).forEach(im=>b+=figure(im));
+    add('격리 샌드박스','샌드박스',b);
   }
 
   if(p.security){
-    html+=`<div class="block"><div class="block-label">샌드박스 보안</div><p>${p.security.intro}</p>`;
-    (p.security.images||[]).forEach(im=>html+=figure(im));
-    html+=`</div>`;
+    let b=`<p>${p.security.intro}</p>`;
+    if(p.security.highlights){
+      b+=`<div class="flow">`+p.security.highlights.map((n,i)=>`<span class="flow-node${i===0?' hl':''}">${n}</span>`+(i<p.security.highlights.length-1?'<span class="flow-arrow">→</span>':'')).join('')+`</div>`;
+    }
+    (p.security.items||[]).forEach(it=>{
+      b+=`<div class="arch-sec"><div class="arch-sec-title">${it.title}</div></div>`;
+      if(it.image) b+=figure(it.image);
+      b+=`<div class="arch-sec arch-sec-after"><div class="arch-sec-body">${it.body}</div></div>`;
+    });
+    (p.security.images||[]).forEach(im=>b+=figure(im));
+    add(p.security.label||'샌드박스 보안', p.security.short||'보안', b);
   }
 
   if(p.monitoring){
-    html+=`<div class="block"><div class="block-label">관측성</div><p>${p.monitoring.intro}</p>`;
-    if(p.monitoring.image) html+=figure(p.monitoring.image);
-    (p.monitoring.images||[]).forEach(im=>html+=figure(im));
-    html+=`</div>`;
+    let b=`<p>${p.monitoring.intro}</p>`;
+    if(p.monitoring.image) b+=figure(p.monitoring.image);
+    (p.monitoring.images||[]).forEach(im=>b+=figure(im));
+    add('관측성','관측성',b);
   }
 
   if(p.decisions){
-    html+=`<div class="block"><div class="block-label">핵심 설계 결정</div>`;
-    p.decisions.forEach(d=>{
-      html+=`<div class="di"><div class="di-title">${d.title}</div><div class="di-body">${d.body}</div><div class="di-trade"><span>trade-off</span>${d.trade}</div></div>`;
-    });
-    html+=`</div>`;
+    let b='';
+    p.decisions.forEach(d=>{ b+=`<div class="di"><div class="di-title">${d.title}</div><div class="di-body">${d.body}</div><div class="di-trade"><span>trade-off</span>${d.trade}</div></div>`; });
+    add('핵심 설계 결정','설계 결정',b);
   }
 
   if(p.dr){
-    html+=`<div class="block"><div class="block-label">멀티클라우드 DR</div><p>${p.dr.intro}</p>${figure(p.dr.image)}</div>`;
+    add('멀티클라우드 DR','DR',`<p>${p.dr.intro}</p>${figure(p.dr.image)}`);
   }
 
   if(p.demo){
-    html+=`<div class="block"><div class="block-label">라이브 데모 · 운영 대시보드</div><p>${p.demo.intro}</p>`;
-    (p.demo.images||[]).forEach(im=>html+=figure(im));
-    html+=`</div>`;
+    let b='';
+    if(p.demo.agents){
+      b+=`<div class="arch-sec"><div class="arch-sec-title">${p.demo.agentsTitle||'AI Agent 구성'}</div>`;
+      if(p.demo.agentsIntro) b+=`<div class="arch-sec-body" style="margin-bottom:14px">${p.demo.agentsIntro}</div>`;
+      b+=`</div><div class="agent-list">`;
+      p.demo.agents.forEach((a,i)=>{
+        b+=`<div class="agent-row"><span class="agent-num">${String(i+1).padStart(2,'0')}</span><div><span class="agent-name">${a.name}</span><span class="agent-desc">${a.desc}</span></div></div>`;
+      });
+      b+=`</div>`;
+    }
+    if(p.demo.intro) b+=`<p style="margin-top:24px">${p.demo.intro}</p>`;
+    (p.demo.images||[]).forEach(im=>b+=figure(im));
+    (p.demo.imageSections||[]).forEach(sec=>{
+      b+=`<div class="arch-sec"><div class="arch-sec-title">${sec.title}</div></div>`;
+      if(sec.image) b+=figure(sec.image);
+      if(sec.body) b+=`<div class="arch-sec arch-sec-after"><div class="arch-sec-body">${sec.body}</div></div>`;
+    });
+    add('FinOps 워크플로 · 라이브 데모','FinOps 워크플로',b);
   }
 
   if(p.troubleshooting){
-    html+=`<div class="block"><div class="block-label">트러블슈팅</div><p>${p.troubleshooting.intro}</p>`;
-    p.troubleshooting.items.forEach(it=>{
-      html+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`;
-    });
-    if(p.troubleshootImage) html+=figure(p.troubleshootImage);
-    html+=`</div>`;
+    let b=`<p>${p.troubleshooting.intro}</p>`;
+    p.troubleshooting.items.forEach(it=>{ b+=`<div class="di"><div class="di-title">${it.title}</div><div class="di-body">${it.body}</div></div>`; });
+    if(p.troubleshootImage) b+=figure(p.troubleshootImage);
+    add('트러블슈팅','트러블슈팅',b);
   }
 
   if(p.tech){
-    html+=`<div class="block"><div class="block-label">기술 스택 · 선택 이유</div><div class="tech-grid">`;
+    let b=`<div class="tech-grid">`;
     p.tech.forEach(t=>{
-      html+=`<div><div class="tech-col-label">${t.cat}</div>`;
-      t.items.forEach(i=>html+=`<div class="tech-item"><div class="ti-name">${i[0]}</div><div class="ti-why">${i[1]}</div></div>`);
-      html+=`</div>`;
+      b+=`<div><div class="tech-col-label">${t.cat}</div>`;
+      t.items.forEach(i=>b+=`<div class="tech-item"><div class="ti-name">${i[0]}</div><div class="ti-why">${i[1]}</div></div>`);
+      b+=`</div>`;
     });
-    html+=`</div></div>`;
+    b+=`</div>`;
+    add('기술 스택 · 선택 이유','기술 스택',b);
   }
 
-  if(p.note) html+=`<div class="note">${p.note}</div>`;
-  if(p.links) html+=`<div class="detail-links">`+p.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener" class="btn btn-ghost">${l.label} ↗</a>`).join('')+`</div>`;
+  // note / links 는 마지막 챕터 하단에 붙는 고정 꼬리
+  let tail='';
+  if(p.note) tail+=`<div class="note">${p.note}</div>`;
+  if(p.links) tail+=`<div class="detail-links">`+p.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener" class="btn btn-ghost">${l.label} ↗</a>`).join('')+`</div>`;
 
-  document.getElementById('d-body').innerHTML=html;
+  // 프로젝트가 chapterOrder를 지정하면 그 순서로 재정렬 (목록에 없는 챕터는 뒤에 원순서 유지)
+  if(Array.isArray(p.chapterOrder)){
+    chapters.sort((a,b)=>{
+      let ia=p.chapterOrder.indexOf(a.short), ib=p.chapterOrder.indexOf(b.short);
+      if(ia<0) ia=999; if(ib<0) ib=999;
+      return ia-ib;
+    });
+  }
+
+  // ── 목차(탭) ──
+  const toc=`<div class="toc" id="toc">`+chapters.map((c,i)=>
+    `<button class="toc-item${i===0?' active':''}" data-idx="${i}" onclick="gotoChapter(${i})">
+       <span class="toc-num">${String(i+1).padStart(2,'0')}</span>
+       <span class="toc-label">${c.short}</span>
+     </button>`).join('')+`</div>`;
+
+  // ── 챕터 본문들 (한 번에 하나만 표시) ──
+  const bodies=chapters.map((c,i)=>{
+    const prev=i>0?`<button class="chap-nav prev" onclick="gotoChapter(${i-1})">← ${chapters[i-1].short}</button>`:`<span></span>`;
+    const next=i<chapters.length-1?`<button class="chap-nav next" onclick="gotoChapter(${i+1})">다음 · ${chapters[i+1].short} →</button>`:`<button class="chap-nav next" onclick="go('/')">← 프로젝트 목록으로</button>`;
+    return `<div class="chapter${i===0?' active':''}" data-chapter="${i}">
+      <div class="block">
+        <div class="chap-head"><span class="chap-idx">${String(i+1).padStart(2,'0')} / ${String(chapters.length).padStart(2,'0')}</span><div class="block-label">${c.label}</div></div>
+        ${c.body}
+      </div>
+      ${i===chapters.length-1?tail:''}
+      <div class="chap-footer">${prev}${next}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('d-body').innerHTML=toc+bodies;
+  window.__chapCount=chapters.length;
+  gotoChapter(0,true);
+}
+
+// 챕터 전환
+function gotoChapter(idx,skipScroll){
+  const total=window.__chapCount||0;
+  if(idx<0||idx>=total) return;
+  document.querySelectorAll('.chapter').forEach(el=>el.classList.toggle('active', +el.dataset.chapter===idx));
+  document.querySelectorAll('.toc-item').forEach(el=>el.classList.toggle('active', +el.dataset.idx===idx));
+  // 활성 탭이 목차에서 보이도록 가로 스크롤
+  const activeTab=document.querySelector(`.toc-item[data-idx="${idx}"]`);
+  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  if(!skipScroll){
+    // sticky 목차 높이만큼 여유를 두고 콘텐츠 상단으로 스크롤
+    const anchor=document.getElementById('toc');
+    if(anchor){
+      const y=anchor.getBoundingClientRect().top+window.scrollY-56;
+      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+    }
+  }
 }
 
 /* ROUTER */
