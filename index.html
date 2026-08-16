@@ -148,6 +148,7 @@
   .detail-meta { display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
   .detail-title { font-size:clamp(28px,4.2vw,44px); font-weight:800; letter-spacing:-0.03em; line-height:1.12; margin-bottom:22px; max-width:20ch; }
   .detail-oneline { color:var(--ink-mid); font-size:17.5px; max-width:72ch; line-height:1.7; }
+  .detail-techline { color:var(--ink-dim); font-size:13.5px; max-width:72ch; line-height:1.65; margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
 
   .stat-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0; background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:40px 0; }
   .stat { padding:24px 24px; border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
@@ -376,6 +377,7 @@
       <div class="detail-meta" id="d-meta"></div>
       <h1 class="detail-title" id="d-title"></h1>
       <p class="detail-oneline" id="d-oneline"></p>
+      <p class="detail-techline" id="d-techline"></p>
       <div class="stat-strip" id="d-stats"></div>
     </div>
     <div class="detail-body" id="d-body"></div>
@@ -398,22 +400,22 @@ const PROJECTS = [
     title:"MAS — AI Agent 기반 클라우드 운영 자동화 플랫폼",
     role:"AWS CI/CD · EKS FinOps",
     team:"7인 팀 프로젝트",
-    oneline:"서비스망·운영망을 분리한 2-EKS / 4-VPC 위에 GitOps, 통합 관측성, Temporal 기반 FinOps·AIOps·SecOps와 Slack 승인형(HITL) 자동 대응을 구현한 금융 클라우드 운영 플랫폼.",
+    oneline:"금융권 망분리 규제 완화를 기점으로, AI가 금융 클라우드 인프라의 비용 최적화·장애 대응·보안 운영을 자동화하는 시대를 가정해 격리·감사·승인 통제를 갖춘 AI 운영 플랫폼을 설계한 프로젝트.",
+    techline:"서비스망·운영망을 분리한 2-EKS / 4-VPC 위에 GitOps, 통합 관측성, Temporal 기반 FinOps·AIOps·SecOps와 Slack 승인형(HITL) 자동 대응을 구현한 금융 클라우드 운영 플랫폼.",
     ministat:[["4","VPC"],["2","EKS"],["705","TF 리소스"],["1,202","커밋"]],
     stats:[
-      {val:"4",label:"VPC (망분리)"},
-      {val:"2",label:"EKS 클러스터"},
-      {val:"705",label:"Terraform 리소스 선언"},
-      {val:"83K+",label:"1차 작성 코드/설정 라인"},
-      {val:"1,202",label:"커밋"},
-      {val:"~85d",label:"개발 기간"},
+      {val:"~3분",label:"AI 운영 워크플로 실행 (데모 실측)"},
+      {val:"-$5.96/일",label:"SaaS APM 대비 관측 비용 절감"},
+      {val:"1",label:"사람 진입 경로 (Teleport 단일 관문)"},
+      {val:"0",label:"정적 자격증명 (키리스 설계)"},
     ],
     background:"<strong>왜 시작했나 —</strong> 2026년 금융권 망분리 규제 완화는 금융권이 클라우드·AI를 받아들이기 시작한 신호였습니다. 다만 현재 열린 것은 <strong>비민감 데이터를 다루는 사무용 SaaS를 통제된 단말에서 쓰는 영역</strong>까지이고, 생성형 AI 예외 등 완화는 단계적으로 진행 중입니다. 이 프로젝트는 그 추세가 이어져 <strong>클라우드에 올라간 금융 서비스의 운영 자체에 AI가 개입하는 단계</strong>까지 온다고 가정하고, 그때 필수가 될 통제 체계를 선제적으로 구현한 것입니다.<br><br><strong>어떻게 방향을 잡았나 —</strong> 이 프로젝트는 클라우드 인프라 구성이 목적이므로, AI 운영 서비스를 클라우드 안에서 동작시키기 위해 만족해야 할 금융권 규제부터 조사했습니다. 그 결과 핵심 요건은 세 가지로 정리됐습니다 — <strong>격리</strong>(운영 영역을 외부와 단절), <strong>감사</strong>(접근을 단일 경로로 좁히고 기록), <strong>변경통제</strong>(인프라 변경은 사람의 확인을 거침). 이 세 요건을 동시에 만족시키는 것을 목표로, <strong>서비스망·격리 운영망·단일 관문·온프레 연동으로 분리한 4-VPC 구조에 사람 승인 기반(HITL) AI 자동화와 GCP DR을 얹은 아키텍처</strong>로 방향을 잡았습니다.<br><br><strong>왜 이 아키텍처인가 —</strong> <strong>격리</strong>는 AI 자동화가 외부 LLM 호출을 피할 수 없고 그 연결이 유출·침투 경로가 되므로, 운영망을 인터넷과 완전히 단절하고 LLM은 통제된 경로로만 호출하게 했습니다. <strong>감사</strong>는 격리된 운영망에 사람이 접근하는 순간 격리가 깨질 수 있어, 진입을 전담하는 별도 관문을 두어 모든 접속을 단일 경로로 좁히고 기록했습니다. <strong>변경통제</strong>는 운영 AI가 인프라 상태를 직접 바꾸는 만큼, 위험한 변경은 사람이 최종 승인한 뒤에만 반영되게 해 오조치를 차단했습니다.<br><br><span class='bg-src'><strong>참고 규제</strong> · 격리: 전자금융감독규정 제15조, 시행세칙 제2조의3·별표7(망분리 대체 정보보호통제) · 감사: 규정 제13조(접근기록·1년 보존), 제28조(관리자 행위 이중확인·모니터링) · 변경통제: 규정 제7조제7호(정보기술부문 내부통제), 제13조제5항 · 데이터: 제34조의3(암호화). 현행 규제는 온프레미스 전산을 전제로 하며, 본 프로젝트는 그 통제 수준을 클라우드 아키텍처로 재현한 것입니다.</span>",
     architecture:{
-      intro:"서비스·운영·접근·연동 목적으로 4개 VPC를 분리하고, 5개 VPC Peering으로 필요한 경로만 연결했습니다. AWS Active + GCP Warm Standby DR 구조입니다.",
+      intro:"목적별로 4개 VPC를 분리하고 필요한 경로만 Peering으로 연결했습니다. <strong>VPC1 서비스망</strong>은 인터넷에 노출된 고객 서비스, <strong>VPC2 운영망</strong>은 인터넷과 완전 격리된 AI 운영·관제, <strong>VPC3 관문</strong>은 Teleport 단일 진입, <strong>VPC4 연동</strong>은 온프레미스·GCP를 잇는 Headscale 터널을 담당합니다. 전체는 AWS Active + GCP Warm Standby DR 구조이며, 배포는 내부 GitOps로만 이뤄집니다.",
       images:[
         {src:"arch-vpc.png", cap:"4-VPC 분리형 멀티 AZ 구조 (Service · Ops · Teleport · Headscale)"},
-        {src:"arch-security.png", cap:"AWS 보안 아키텍처 — 망분리 4-VPC · Teleport 단일 진입 · Defense-in-Depth"},
+        {src:"arch-cicd.png", cap:"AWS CI/CD 및 GitOps 아키텍처 — Source → 보안 Gate → ECR 서명 이미지 → 내부 Gitea → Argo CD → EKS"},
+        {src:"arch-onprem.png", cap:"온프레미스 ↔ AWS 하이브리드 — 중요정보는 온프레 보관, 운영 메트릭만 WireGuard 터널로 전송"},
       ],
     },
     contribution:{
@@ -435,6 +437,12 @@ const PROJECTS = [
     monitoring:{
       intro:"Service VPC의 로그·메트릭·트레이스는 Alloy가 수집해 내부 NLB를 통해 Ops VPC의 Loki·Thanos·Tempo로 전달하고, Grafana에서 통합 조회합니다. AWS 지표는 API로 조회해 NLB 부하를 줄였습니다.",
       image:{src:"arch-monitor.png", cap:"통합 관측성 — Service VPC(NLB)와 AWS Managed(API 조회)를 Grafana로 통합"},
+      images:[
+        {src:"obs-thanos.png", cap:"Thanos — PromQL로 financial-ops-eks 클러스터 메트릭 통합 조회 (container CPU 등 119 series)"},
+        {src:"obs-loki.png", cap:"Loki — stock-demo 네임스페이스 로그 볼륨·레벨별 집계와 라벨 기반 검색"},
+        {src:"obs-tempo.png", cap:"Tempo — stock-demo-api 서비스의 HTTP 요청 트레이스 (Trace ID·Duration)"},
+        {src:"obs-cloudwatch.png", cap:"CloudWatch — EC2 인스턴스별 CPU 사용률을 Grafana에서 API로 조회"},
+      ],
     },
     dr:{
       intro:"평상시 AWS를 Active로, GCP를 Warm Standby로 두고 Route 53 Failover로 전환합니다. Split-brain 방지를 위해 어느 시점에도 Write 원본은 한 곳만 유지되도록 설계했습니다.",
@@ -808,6 +816,8 @@ function renderDetail(p){
     `<span class="proj-role">${p.role}</span><span class="proj-team">${p.team}</span>`;
   document.getElementById('d-title').textContent = p.title;
   document.getElementById('d-oneline').textContent = p.oneline;
+  const techEl=document.getElementById('d-techline');
+  if(p.techline){ techEl.textContent=p.techline; techEl.style.display=''; } else { techEl.style.display='none'; }
   document.getElementById('d-stats').innerHTML =
     (p.stats||[]).map(s=>`<div class="stat"><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
