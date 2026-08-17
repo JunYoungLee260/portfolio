@@ -284,7 +284,6 @@
   .decision-outcome.gain h4 { color:var(--green); }
   .decision-outcome.cost h4 { color:var(--amber); }
   .decision-outcome ul { margin:0; padding-left:18px; color:var(--ink-mid); font-size:13.5px; line-height:1.7; }
-  .decision-evidence { color:var(--ink-dim); font-family:var(--mono); font-size:11.5px; line-height:1.7; margin-top:18px; }
   @media(max-width:820px){ .decision-tabs{grid-template-columns:1fr 1fr}.decision-option{grid-template-columns:1fr 82px}.decision-option-body{grid-column:1/-1}.decision-outcomes{grid-template-columns:1fr} }
   @media(max-width:520px){ .decision-tabs{display:flex;overflow-x:auto;padding-bottom:5px}.decision-tab{min-width:180px}.decision-option{grid-template-columns:1fr}.decision-option-status{grid-row:auto}.decision-option-body{grid-column:auto} }
 
@@ -630,21 +629,23 @@ const PROJECTS = [
         evidence:"근거 · vpc/teleport/{ec2,routing,security-groups,efs}.tf · vpc/peering/peering.tf · vpc/ops/eks.tf"
       },
       {
-        label:"하이브리드 연결 VPC4",
-        kicker:"Decision 02 · Hybrid boundary",
-        title:"외부 WireGuard 종단을 운영망 밖으로 밀어낸 이유",
-        summary:"GCP·온프레미스 시뮬레이션과 AWS를 연결하려면 공인 IP와 WireGuard 통신이 가능한 Router가 필요했습니다. 이 접점을 VPC2 안에 두지 않고 별도 VPC4에 격리했습니다.",
-        context:"OCI Headscale은 노드 등록과 키 교환을 담당하고, AWS VPC4의 Tailscale Subnet Router가 AWS 대역을 광고합니다. VPC4는 VPC1·VPC2와 Peering되어 외부 오버레이 트래픽을 필요한 사설 경로로 중계합니다.",
+        label:"하이브리드 + 멀티 클라우드 연결",
+        kicker:"Decision 02 · Hybrid & multi-cloud boundary",
+        title:"온프레·GCP 연결 종단을 전용 VPC4로 분리한 이유",
+        summary:"온프레미스의 중요 고객정보는 망분리 경계 안에 유지하면서, 비민감 운영 메트릭만 AWS의 AI 관측 시스템으로 보내 자동 운영 범위를 확장해야 했습니다. 동시에 AWS 장애 시 GCP DR 환경으로 서비스할 수 있도록 외부 환경과 AWS 사설망 사이의 데이터 연결 기반도 필요했습니다.",
+        context:"OCI의 Headscale은 상시 노드 등록·키·경로 제어를 담당하고, 온프레와 GCP 노드 및 AWS VPC4의 Tailscale Subnet Router가 여기에 등록됩니다. VPC4 Router는 VPC1 10.10.0.0/16과 VPC2 10.20.0.0/16의 경로를 광고하고 Peering을 통해 필요한 사설 목적지로 전달합니다. Route53의 AWS→GCP 사용자 트래픽 Failover는 이 경로와 독립적으로 동작합니다.",
         options:[
-          {name:"VPC2에 VPN Router", status:"rejected", statusLabel:"배제", body:"VPC 수는 줄지만 공인 IP·IGW·WireGuard 종단이 운영망 내부에 들어와 VPC2의 인터넷 비연결 원칙과 충돌합니다."},
-          {name:"Site-to-Site VPN · TGW", status:"alternative", statusLabel:"대안", body:"관리형이고 확장성이 높지만 프로젝트 규모에서는 고정 비용과 라우팅 구성이 큽니다."},
-          {name:"VPC4 Tailscale Router", status:"selected", statusLabel:"선택", body:"작은 EC2 한 대로 OCI Headscale과 기존 Tailscale 구조를 재사용하고, 외부 종단을 운영망과 분리했습니다."},
+          {name:"Public 수신 Endpoint", status:"rejected", statusLabel:"배제", body:"Thanos Receive나 데이터 수신점을 인터넷에 공개하면 구성은 단순하지만 VPC2에 외부 공격 표면이 생겨 운영망 비공개 원칙과 충돌합니다."},
+          {name:"Direct Connect", status:"rejected", statusLabel:"배제", body:"전용 회선의 안정성과 대역폭을 얻을 수 있지만 비용·개통 기간·전용 장비가 필요한 방식이라 개인 프로젝트 규모에서 실제 구현하기 어려웠습니다."},
+          {name:"Site-to-Site VPN · TGW", status:"alternative", statusLabel:"대안", body:"AWS 관리형 이중 터널과 확장성을 얻을 수 있지만 온프레 고정 공인 IP와 VPN 장비, 고정 비용 및 복잡한 라우팅이 필요했습니다."},
+          {name:"VPC2에 Tailscale Router", status:"rejected", statusLabel:"배제", body:"VPC 수는 줄지만 Public Subnet·IGW·EIP·WireGuard 종단과 IP Forwarding이 운영망 내부에 들어와 VPC2의 인터넷 비연결 원칙이 깨집니다."},
+          {name:"VPC3에 Router 통합", status:"rejected", statusLabel:"배제", body:"비용은 줄지만 사람의 관리자 접근과 시스템 간 연결이 같은 장애·침해 범위를 공유하고 Teleport와 Router의 수명주기도 결합됩니다."},
+          {name:"VPC4 Tailscale Router", status:"selected", statusLabel:"선택", body:"프로젝트 규모에서 Headscale 기반 WireGuard 연결을 재사용하면서 외부 시스템 종단을 서비스망·운영망·관리망과 분리할 수 있습니다."},
         ],
-        criteria:["외부 종단의 VPC2 배제","소규모 비용","멀티클라우드 확장","명시적 Peering 경로"],
-        decision:"<strong>VPC4에 Tailscale Subnet Router를 두고 VPC1·VPC2와 Peering</strong>했습니다. Headscale 서버는 VPC4가 아니라 OCI에 있으며, VPC4에는 그 제어 서버에 등록되는 Tailscale Router가 배치됩니다.",
-        gains:["운영망과 외부 VPN 종단 분리","AWS·GCP 연결 경로 명시","기존 OCI Headscale 재사용"],
-        costs:["Router EC2·EIP 비용","SNAT·route·패치 직접 관리","단일 Router 장애점","실제 온프레미스 연결 상태는 코드상 확인 불가"],
-        evidence:"근거 · vpc/headscale/{ec2,security-groups,routing}.tf · vpc/peering/peering.tf"
+        criteria:["VPC2 인터넷 비연결","민감 데이터 온프레 보관","전송 구간 암호화","사람 접근과 시스템 연결 분리","장애·침해 범위 축소","프로젝트 비용과 구현 가능성"],
+        decision:"<strong>온프레 관측과 GCP DR 데이터 연결을 Headscale·Tailscale 기반으로 통합하고, 그 Subnet Router를 전용 VPC4에 배치</strong>했습니다. 온프레에서는 고객 원문이 아닌 비민감 운영 메트릭만 전송하고, GCP DR에는 AWS 사설 데이터 계층과 통신할 수 있는 경로를 제공합니다. VPC4는 VPC1·VPC2와 Peering하되 대상 보안 그룹이 허용한 포트만 접근하도록 경계를 유지합니다.",
+        gains:["민감 데이터의 온프레미스 보관","AWS AI 관측 범위를 온프레까지 확장","Thanos·RDS의 인터넷 직접 노출 제거","온프레·GCP·AWS의 암호화 연결 기반 공유","VPC2 운영망과 VPC3 관리망의 외부 종단 분리","내부 자원별 Tailscale 설치 제거"],
+        costs:["VPC4·Router EC2·EIP·Peering 비용","Headscale·키·SNAT·route·패치 직접 관리","단일 Headscale·Router 장애 가능성","관리형 VPN 수준의 SLA 부재","온프레 관측과 DR 연결이 Router 장애 영역을 공유","DB 복제·자동 Failback과 Thanos 19291 경로는 코드상 확인 불가"]
       },
       {
         label:"격리형 CI/CD·GitOps",
@@ -1107,7 +1108,6 @@ function renderDetail(p){
         <div class="decision-section"><div class="decision-section-title">판단 기준 · 우선순위</div><div class="decision-criteria">${criteria}</div></div>
         <div class="decision-section"><div class="decision-section-title">최종 결정</div><div class="decision-final">${d.decision}</div></div>
         <div class="decision-section"><div class="decision-section-title">결과 · 얻은 것과 치른 것</div><div class="decision-outcomes"><div class="decision-outcome gain"><h4>얻은 것</h4><ul>${gains}</ul></div><div class="decision-outcome cost"><h4>치른 것</h4><ul>${costs}</ul></div></div></div>
-        ${d.evidence?`<div class="decision-evidence">${d.evidence}</div>`:''}
       </article>`;
     }).join('');
     b+=`</div>`;
