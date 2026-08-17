@@ -248,6 +248,46 @@
   .di-trade { margin-top:11px; font-size:14.5px; color:var(--ink-dim); line-height:1.6; }
   .di-trade span { color:var(--amber); font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; margin-right:9px; font-weight:500; }
 
+  /* 설계 결정 안의 2차 목차 */
+  .decision-switcher { margin-top:4px; }
+  .decision-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:32px; }
+  .decision-tab { display:flex; align-items:center; gap:10px; min-height:58px; padding:12px 14px; border:1px solid var(--line); border-radius:11px; background:var(--surface); color:var(--ink-mid); cursor:pointer; text-align:left; transition:border-color .18s, background .18s, color .18s, transform .18s; }
+  .decision-tab:hover { border-color:var(--ink-dim); transform:translateY(-1px); }
+  .decision-tab.active { border-color:var(--ink); background:var(--ink); color:var(--bg); }
+  .decision-tab-num { font-family:var(--mono); font-size:10.5px; opacity:.65; }
+  .decision-tab-label { font-size:13.5px; font-weight:650; line-height:1.35; }
+  .decision-panel { display:none; }
+  .decision-panel.active { display:block; animation:decision-in .22s ease; }
+  @keyframes decision-in { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+  .decision-kicker { color:var(--amber); font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; }
+  .decision-title { font-size:clamp(22px,2.5vw,29px); line-height:1.3; letter-spacing:-.025em; margin:0 0 13px; }
+  .decision-summary { color:var(--ink-mid); font-size:16px; line-height:1.75; margin:0 0 30px; max-width:78ch; }
+  .decision-section { margin-top:30px; }
+  .decision-section-title { font-family:var(--mono); color:var(--ink-dim); font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:16px; }
+  .decision-context { color:var(--ink-mid); font-size:15.5px; line-height:1.75; }
+  .decision-context strong { color:var(--ink); }
+  .decision-options { display:grid; gap:10px; }
+  .decision-option { display:grid; grid-template-columns:minmax(130px,.7fr) 86px minmax(0,2fr); gap:16px; align-items:start; padding:16px 17px; border:1px solid var(--line); border-radius:11px; background:var(--surface); }
+  .decision-option-name { color:var(--ink); font-size:14.5px; font-weight:650; }
+  .decision-option-status { justify-self:start; padding:4px 8px; border-radius:5px; font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; }
+  .decision-option-status.rejected { color:#a64b3e; background:#fff0ec; }
+  .decision-option-status.alternative { color:#8a661e; background:#fff6dd; }
+  .decision-option-status.selected { color:#23704c; background:#e9f7ef; }
+  .decision-option-body { color:var(--ink-mid); font-size:14px; line-height:1.65; }
+  .decision-criteria { display:flex; flex-wrap:wrap; gap:8px; }
+  .decision-criterion { border:1px solid var(--line); border-radius:8px; background:var(--bg-soft); color:var(--ink-mid); font-size:13px; padding:8px 11px; }
+  .decision-final { border-left:3px solid var(--ink); background:var(--bg-soft); border-radius:0 10px 10px 0; color:var(--ink-mid); font-size:15px; line-height:1.75; padding:18px 20px; }
+  .decision-final strong { color:var(--ink); }
+  .decision-outcomes { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .decision-outcome { border:1px solid var(--line); border-radius:11px; padding:17px 18px; background:var(--surface); }
+  .decision-outcome h4 { font-size:13px; margin:0 0 10px; }
+  .decision-outcome.gain h4 { color:var(--green); }
+  .decision-outcome.cost h4 { color:var(--amber); }
+  .decision-outcome ul { margin:0; padding-left:18px; color:var(--ink-mid); font-size:13.5px; line-height:1.7; }
+  .decision-evidence { color:var(--ink-dim); font-family:var(--mono); font-size:11.5px; line-height:1.7; margin-top:18px; }
+  @media(max-width:820px){ .decision-tabs{grid-template-columns:1fr 1fr}.decision-option{grid-template-columns:1fr 82px}.decision-option-body{grid-column:1/-1}.decision-outcomes{grid-template-columns:1fr} }
+  @media(max-width:520px){ .decision-tabs{display:flex;overflow-x:auto;padding-bottom:5px}.decision-tab{min-width:180px}.decision-option{grid-template-columns:1fr}.decision-option-status{grid-row:auto}.decision-option-body{grid-column:auto} }
+
   .flow { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:16px 0 8px; }
   .flow-node { font-family:var(--mono); font-size:12.5px; color:var(--ink-mid); background:var(--bg-soft); border:1px solid var(--line); padding:8px 13px; border-radius:8px; }
   .flow-node.hl { border-color:var(--ink); color:var(--ink); background:var(--surface); }
@@ -568,11 +608,79 @@ const PROJECTS = [
         {name:"Postmortem Learning", desc:"과거 이력과 현재 예측을 비교해 편차를 정리 (planning 단계 학습 자료 생성)"},
       ],
     },
-    decisions:[
-      {title:"서비스망과 운영망을 별도 VPC · EKS로 분리", body:"공개 서비스(financial-service-eks)와 높은 권한을 가진 운영 자동화·보안 대응 시스템(financial-ops-eks)을 물리적으로 분리했습니다.", trade:"장애·권한 격리와 독립 확장성을 얻는 대신, 클러스터 간 K8s DNS를 쓸 수 없어 내부 NLB·VPC Peering·별도 IAM 관리가 필요해졌습니다."},
-      {title:"인터넷 의존도를 줄인 내부 GitOps + ECR 미러 구조", body:"Argo CD가 내부 Git을 바라보고, 외부 이미지는 ECR로 미러링한 뒤 Cosign 서명까지 수행합니다. \"이미지는 ECR, YAML은 Git\"으로 저장소 역할을 분리했습니다.", trade:"공급망 통제와 재현성을 얻는 대신, 이미지 미러·Gitea bootstrap·placeholder 치환 등 운영 복잡도가 추가됩니다."},
-      {title:"장시간 승인 대기를 Temporal Durable Execution으로 모델링", body:"Agent 작업을 Temporal Workflow/Activity로 분리하고, Slack 승인 결과를 Workflow Signal로 받습니다. 승인이 며칠 걸려도 상태를 잃지 않고 대기합니다.", trade:"프로세스 재시작 후에도 승인·실행 흐름을 복구할 수 있는 대신, Temporal 서버·DB·Worker 관리와 결정성 제약이 추가됩니다."},
-      {title:"자동 대응 전 다단계 HITL 안전장치", body:"위험한 변경은 Slack 승인을 통과해야 하고, SecOps는 1차 분석 승인과 2차 실제 조치 승인을 분리했습니다. 실제 격리·IAM 회수에는 dry-run 스위치도 뒀습니다.", trade:"오조치 위험을 줄이는 대신, MTTR이 승인자 응답에 종속되고 승인 경로가 복잡해집니다."},
+    decisionGroups:[
+      {
+        label:"관리 접근망 VPC3",
+        kicker:"Decision 01 · Access plane",
+        title:"운영망 밖에 Private Teleport 관문을 둔 이유",
+        summary:"VPC2의 인터넷 비연결 상태를 유지하면서도 EKS·Argo CD·운영 UI에 대한 대화형 접근과 사용자 단위 감사를 제공해야 했습니다. 감사 기능만을 위해 VPC3가 필요했던 것은 아닙니다. 관리 관문과 운영 대상의 네트워크·변경·장애 수명주기를 분리하는 것을 비용보다 우선했습니다.",
+        context:"서비스를 제공하는 <strong>VPC1</strong>과 IGW·NAT·Public IP·Public EKS API가 없는 <strong>VPC2</strong>를 분리했습니다. 일반 변경은 GitOps로 통제할 수 있지만, 장애 조사와 긴급 복구에는 대화형 접근이 필요했습니다. 목표는 ‘VPC2에 공개 진입점을 만들지 않고, 누가 어떤 운영 자원에 접근했는지 추적하는 단일 관문’을 만드는 것이었습니다.",
+        options:[
+          {name:"VPC2 Public Bastion", status:"rejected", statusLabel:"배제", body:"가장 단순하지만 VPC2에 IGW·Public subnet·Public IP·인터넷 ingress가 생깁니다. 관문 침해가 곧 운영망 내부 침해로 이어져 격리 불변식과 충돌했습니다."},
+          {name:"SSM-only", status:"alternative", statusLabel:"후순위", body:"인터넷 비노출과 낮은 비용은 만족합니다. 다만 관리자 접속은 CloudTrail·SSM Session Log, Kubernetes 행위는 EKS Audit Log에 분산되어 사용자 세션과 리소스 변경을 별도로 연결해야 합니다. EC2 셸·Kubernetes·내부 UI의 정책도 각각 운영해야 합니다."},
+          {name:"AWS Client VPN", status:"rejected", statusLabel:"배제", body:"관리형 VPN이지만 관리자를 VPC2 네트워크에 직접 편입합니다. 연결 기록은 남지만 Kubernetes 작업 감사는 별도이며, Authorization Rule 오류 시 접근 범위가 넓어질 수 있습니다."},
+          {name:"GitOps-only + Breakglass", status:"alternative", statusLabel:"부분 채택", body:"일반 변경은 Git commit과 승인 이력으로 가장 잘 통제합니다. 그러나 Argo CD 자체 장애, 실시간 진단, 내부 운영 UI 사용까지 GitOps만으로 처리하기 어려워 유일한 접근 방식으로는 선택하지 않았습니다."},
+          {name:"VPC2 Private Teleport", status:"alternative", statusLabel:"대안", body:"인터넷 격리와 Teleport 감사는 동일하게 만족하며 비용도 더 낮습니다. 하지만 관리 관문이 EKS·운영 워크로드와 같은 네트워크·변경·장애 범위를 공유해, 복구가 필요한 시점에 접근 계층도 함께 영향을 받을 수 있습니다."},
+          {name:"VPC3 Private Teleport", status:"selected", statusLabel:"선택", body:"관리 Plane을 별도 VPC로 분리하고 VPC3 자체도 Public IP·IGW·NAT 없이 SSM으로 관리합니다. VPC2에는 Peering과 Security Group을 통해 Private EKS API 443 등 필요한 사설 경로만 허용했습니다."},
+        ],
+        criteria:["VPC2 인터넷 비연결","최종 사용자 단위 감사","관리 Plane 분리","장애·수명주기 분리","VPC1·VPC2 접근 통합","비용보다 경계 우선"],
+        decision:"<strong>일반 변경은 GitOps, 대화형 운영은 VPC3의 Private Teleport</strong>로 역할을 분리했습니다. SSM은 탈락시킨 것이 아니라 Teleport EC2의 부트스트랩·관리·비상 통로로 사용했습니다. EKS 노드나 운영 워크로드가 장애여도 접근 관문 자체는 별도로 유지되도록 했습니다. 단, EKS API나 VPC2 네트워크 전체가 중단되면 VPC3에서도 접근할 수 있으므로 모든 장애를 해결하는 구조는 아닙니다.",
+        gains:["VPC2 공개 진입점 제거","관리 Plane과 운영 Plane의 네트워크 경계","VPC1·VPC2 접근 관문 통합","운영 워크로드와 접근 계층의 수명주기 분리"],
+        costs:["VPC3·EC2·EFS·Endpoint·Peering 비용","Teleport 패치·백업·장애 복구 부담","단일 Teleport EC2라는 장애점","현재 Cluster Admin 권한 집중"],
+        evidence:"근거 · vpc/teleport/{ec2,routing,security-groups,efs}.tf · vpc/peering/peering.tf · vpc/ops/eks.tf"
+      },
+      {
+        label:"하이브리드 연결 VPC4",
+        kicker:"Decision 02 · Hybrid boundary",
+        title:"외부 WireGuard 종단을 운영망 밖으로 밀어낸 이유",
+        summary:"GCP·온프레미스 시뮬레이션과 AWS를 연결하려면 공인 IP와 WireGuard 통신이 가능한 Router가 필요했습니다. 이 접점을 VPC2 안에 두지 않고 별도 VPC4에 격리했습니다.",
+        context:"OCI Headscale은 노드 등록과 키 교환을 담당하고, AWS VPC4의 Tailscale Subnet Router가 AWS 대역을 광고합니다. VPC4는 VPC1·VPC2와 Peering되어 외부 오버레이 트래픽을 필요한 사설 경로로 중계합니다.",
+        options:[
+          {name:"VPC2에 VPN Router", status:"rejected", statusLabel:"배제", body:"VPC 수는 줄지만 공인 IP·IGW·WireGuard 종단이 운영망 내부에 들어와 VPC2의 인터넷 비연결 원칙과 충돌합니다."},
+          {name:"Site-to-Site VPN · TGW", status:"alternative", statusLabel:"대안", body:"관리형이고 확장성이 높지만 프로젝트 규모에서는 고정 비용과 라우팅 구성이 큽니다."},
+          {name:"VPC4 Tailscale Router", status:"selected", statusLabel:"선택", body:"작은 EC2 한 대로 OCI Headscale과 기존 Tailscale 구조를 재사용하고, 외부 종단을 운영망과 분리했습니다."},
+        ],
+        criteria:["외부 종단의 VPC2 배제","소규모 비용","멀티클라우드 확장","명시적 Peering 경로"],
+        decision:"<strong>VPC4에 Tailscale Subnet Router를 두고 VPC1·VPC2와 Peering</strong>했습니다. Headscale 서버는 VPC4가 아니라 OCI에 있으며, VPC4에는 그 제어 서버에 등록되는 Tailscale Router가 배치됩니다.",
+        gains:["운영망과 외부 VPN 종단 분리","AWS·GCP 연결 경로 명시","기존 OCI Headscale 재사용"],
+        costs:["Router EC2·EIP 비용","SNAT·route·패치 직접 관리","단일 Router 장애점","실제 온프레미스 연결 상태는 코드상 확인 불가"],
+        evidence:"근거 · vpc/headscale/{ec2,security-groups,routing}.tf · vpc/peering/peering.tf"
+      },
+      {
+        label:"격리형 CI/CD·GitOps",
+        kicker:"Decision 03 · Delivery",
+        title:"외부 CI와 Private EKS 사이를 GitOps 경계로 분리한 이유",
+        summary:"GitHub Actions가 Private EKS API에 직접 접근하지 않도록 이미지와 배포 선언의 전달 경로를 분리했습니다. 이미지는 ECR에, 환경값이 치환된 YAML은 내부 Gitea에 저장하고 Argo CD가 pull합니다.",
+        context:"VPC2 EKS API와 내부 Gitea는 인터넷에서 접근할 수 없습니다. 외부 CI에 kubectl 권한을 주거나 EKS API를 공개하지 않으면서도 이미지 검증, 환경별 manifest 생성, 배포 이력을 유지해야 했습니다.",
+        options:[
+          {name:"CI에서 kubectl 직접 배포", status:"rejected", statusLabel:"배제", body:"구조는 단순하지만 EKS API 공개 또는 별도 네트워크 연결이 필요하고, 외부 CI 역할에 클러스터 변경 권한이 집중됩니다."},
+          {name:"Argo CD가 외부 Git pull", status:"alternative", statusLabel:"후순위", body:"GitOps는 단순해지지만 격리망에서 외부 Git으로 나가는 인터넷 경로가 필요하고 내부 주소·계정값 관리가 외부 저장소에 노출됩니다."},
+          {name:"ECR + 내부 Gitea + Argo CD", status:"selected", statusLabel:"선택", body:"GitHub Actions는 OIDC로 빌드·Trivy·Cosign 서명 후 ECR에 push하고, CodeBuild가 placeholder를 치환한 복사본만 내부 Gitea에 반영합니다. Argo CD가 이를 pull합니다."},
+        ],
+        criteria:["Private EKS 유지","CI 장기 키 제거","공급망 검증","Git 변경 이력","외부 Git의 환경 독립성"],
+        decision:"<strong>이미지는 ECR, YAML은 내부 Git</strong>으로 역할을 분리했습니다. 외부 Git에는 placeholder를 유지하고, CodeBuild bootstrap이 AWS API로 조회한 실제 값으로 치환한 복사본만 Gitea에 push하도록 했습니다.",
+        gains:["외부 CI와 EKS API 직접 연결 제거","OIDC·Trivy·Cosign 공급망 체인","환경 독립적인 외부 manifest","GitOps 변경 이력과 self-heal"],
+        costs:["CodeBuild·Gitea·Argo CD 운영 복잡도","placeholder 치환 실패 가능성","이미지와 manifest 상태 동기화 필요"],
+        evidence:"근거 · .github/workflows/app-deploy.yml · buildspec-gitops-bootstrap.yml · buildspec-manifest-updater.yml · gitops/platform"
+      },
+      {
+        label:"이벤트 기반 FinOps",
+        kicker:"Decision 04 · FinOps workflow",
+        title:"실시간 반응보다 근거 있는 사전 증설과 사람 승인을 택한 이유",
+        summary:"예측 가능한 금융 이벤트 트래픽에 대해 장애 후 반응하는 오토스케일링만 의존하지 않고, 이벤트 전에 용량·비용·병목을 계산해 운영자 승인 후 실행하는 워크플로를 설계했습니다.",
+        context:"이벤트 트래픽은 짧은 시간에 급증해 HPA나 Cluster Autoscaler의 관측·노드 기동 시간을 기다리면 대응이 늦을 수 있습니다. 반면 완전 자동 사전 증설은 잘못된 예측이 비용 낭비나 과도한 변경으로 이어질 수 있습니다.",
+        options:[
+          {name:"HPA·CA 실시간 반응", status:"alternative", statusLabel:"후순위", body:"구현은 단순하지만 지표 관측, Pod 배치, Node 준비까지 지연이 있어 급격한 이벤트 Peak를 먼저 맞을 수 있습니다."},
+          {name:"고정 최대 용량 유지", status:"rejected", statusLabel:"배제", body:"안정성은 높지만 이벤트가 없는 시간에도 유휴 비용을 계속 지불합니다."},
+          {name:"AI 완전 자동 실행", status:"rejected", statusLabel:"배제", body:"빠르지만 예측 오류와 LLM 판단을 그대로 인프라 변경으로 연결해 오조치 위험이 큽니다."},
+          {name:"이벤트 사전 계산 + HITL", status:"selected", statusLabel:"선택", body:"Agent가 RPS·Pod·Node·RDS CPU·비용을 순차 계산하고 근거를 리포트로 남긴 뒤 Slack 승인을 기다립니다. Temporal이 장기 대기와 재시도를 관리합니다."},
+        ],
+        criteria:["Peak 이전 readiness","계산 근거 추적","비용 효율","오조치 방지","장기 승인 상태 보존"],
+        decision:"<strong>EventBridge로 계획을 시작하고 Temporal Durable Workflow에서 Agent 판단과 Slack HITL을 연결</strong>했습니다. 계산은 결정론적 로직으로 남기고 LLM은 설명과 위험 해석을 보조하도록 역할을 분리했습니다.",
+        gains:["Peak 이전 용량 준비","계산식·입력값이 남는 설명 가능한 자동화","승인 대기 중 상태 보존","불필요한 상시 최대 용량 축소"],
+        costs:["예측 실패 시 유휴 비용 또는 용량 부족","승인 응답에 따른 실행 지연","Temporal·DB·Worker 운영","Agent 간 데이터 정합성 관리"],
+        evidence:"근거 · mas/finops-orchestrator · gitops/platform/financial-ops-eks/finops-mas · EventBridge·Temporal·Slack HITL 구성"
+      },
     ],
     tech:[
       {cat:"IaC · 프로비저닝", items:[
@@ -979,7 +1087,32 @@ function renderDetail(p){
     add('관측성','관측성',b);
   }
 
-  if(p.decisions){
+  if(p.decisionGroups){
+    const switcherId=`decision-switcher-${p.id}`;
+    let b=`<div class="decision-switcher" id="${switcherId}">`;
+    b+=`<div class="decision-tabs" role="tablist" aria-label="설계 결정 목차">`;
+    b+=p.decisionGroups.map((d,i)=>`<button type="button" class="decision-tab${i===0?' active':''}" role="tab" aria-selected="${i===0}" aria-controls="${switcherId}-panel-${i}" id="${switcherId}-tab-${i}" data-decision="${i}" onclick="gotoDecision('${switcherId}',${i})"><span class="decision-tab-num">${String(i+1).padStart(2,'0')}</span><span class="decision-tab-label">${d.label}</span></button>`).join('');
+    b+=`</div>`;
+    b+=p.decisionGroups.map((d,i)=>{
+      const options=(d.options||[]).map(o=>`<div class="decision-option"><div class="decision-option-name">${o.name}</div><span class="decision-option-status ${o.status}">${o.statusLabel}</span><div class="decision-option-body">${o.body}</div></div>`).join('');
+      const criteria=(d.criteria||[]).map(c=>`<span class="decision-criterion">${c}</span>`).join('');
+      const gains=(d.gains||[]).map(x=>`<li>${x}</li>`).join('');
+      const costs=(d.costs||[]).map(x=>`<li>${x}</li>`).join('');
+      return `<article class="decision-panel${i===0?' active':''}" role="tabpanel" tabindex="0" id="${switcherId}-panel-${i}" aria-labelledby="${switcherId}-tab-${i}" data-decision-panel="${i}">
+        <div class="decision-kicker">${d.kicker}</div>
+        <h3 class="decision-title">${d.title}</h3>
+        <p class="decision-summary">${d.summary}</p>
+        <div class="decision-section"><div class="decision-section-title">맥락 · 문제</div><div class="decision-context">${d.context}</div></div>
+        <div class="decision-section"><div class="decision-section-title">선택지 비교</div><div class="decision-options">${options}</div></div>
+        <div class="decision-section"><div class="decision-section-title">판단 기준 · 우선순위</div><div class="decision-criteria">${criteria}</div></div>
+        <div class="decision-section"><div class="decision-section-title">최종 결정</div><div class="decision-final">${d.decision}</div></div>
+        <div class="decision-section"><div class="decision-section-title">결과 · 얻은 것과 치른 것</div><div class="decision-outcomes"><div class="decision-outcome gain"><h4>얻은 것</h4><ul>${gains}</ul></div><div class="decision-outcome cost"><h4>치른 것</h4><ul>${costs}</ul></div></div></div>
+        ${d.evidence?`<div class="decision-evidence">${d.evidence}</div>`:''}
+      </article>`;
+    }).join('');
+    b+=`</div>`;
+    add('핵심 설계 결정','설계 결정',b);
+  } else if(p.decisions){
     let b='';
     p.decisions.forEach(d=>{ b+=`<div class="di"><div class="di-title">${d.title}</div><div class="di-body">${d.body}</div><div class="di-trade"><span>trade-off</span>${d.trade}</div></div>`; });
     add('핵심 설계 결정','설계 결정',b);
@@ -1066,6 +1199,20 @@ function renderDetail(p){
   document.getElementById('d-body').innerHTML=toc+bodies;
   window.__chapCount=chapters.length;
   gotoChapter(0,true);
+}
+
+// 설계 결정 2차 목차 전환
+function gotoDecision(switcherId,idx){
+  const root=document.getElementById(switcherId);
+  if(!root) return;
+  root.querySelectorAll('.decision-tab').forEach(el=>{
+    const active=+el.dataset.decision===idx;
+    el.classList.toggle('active',active);
+    el.setAttribute('aria-selected',String(active));
+  });
+  root.querySelectorAll('.decision-panel').forEach(el=>el.classList.toggle('active',+el.dataset.decisionPanel===idx));
+  const activeTab=root.querySelector(`.decision-tab[data-decision="${idx}"]`);
+  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
 }
 
 // 챕터 전환
